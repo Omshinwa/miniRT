@@ -1,10 +1,18 @@
-* Redo Makefile so it creates dependencies
-* Split the main into parts
+# file organization
+* split the main.h cleanly
 * create branches for each parts
-* linked list of objects
+
+# app structure
+* linked list of objects, remove globals
+
+# math / raytracing
 * put the light in the t_app, do the light calc
-* parse files
-* use david's libft?
+* add plane raytracing
+
+# UI / UX
 * click to target object, make it moveable
 * turn camera view
-* gitignore
+
+# others
+* parse files
+* use david's libft?

@@ -13,23 +13,23 @@
 #include "main.h"
 #include "hooks/hooks.h"
 #include "app/app.h"
-#include "mlx.h"
 #include "draw/draw.h"
 
+#include "../minilibx-linux/mlx.h"
 #include <stdio.h>
 
-t_sphere g_s = {{0,0,100}, 10};
-t_sphere g_light = {{0,20,100}, 10};
+t_sphere g_s = {{0, 0, 100}, 10};
+t_sphere g_light = {{0, 20, 100}, 10};
 
 int main(void)
 {
-	t_app	*app;
+	t_app *app;
 
 	app = create_app();
 	if (!app)
 		return (-1);
-	mlx_key_hook (app->win_ptr, on_key_input, app);
-	mlx_mouse_hook (app->win_ptr, on_mouse_input, app);
+	mlx_key_hook(app->win_ptr, on_key_input, app);
+	mlx_mouse_hook(app->win_ptr, on_mouse_input, app);
 	mlx_loop_hook(app->mlx_ptr, on_no_input, app);
 	mlx_hook(app->win_ptr, 17, 0, exit_n_clean, app);
 	printf("cc\n");

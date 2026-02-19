@@ -1,17 +1,17 @@
+#include "../../minilibx-linux/mlx.h"
 #include "../main.h"
 
-//    █████████   ███████████  ███████████ 
+//    █████████   ███████████  ███████████
 //   ███░░░░░███ ░░███░░░░░███░░███░░░░░███
 //  ░███    ░███  ░███    ░███ ░███    ░███
-//  ░███████████  ░██████████  ░██████████ 
-//  ░███░░░░░███  ░███░░░░░░   ░███░░░░░░  
-//  ░███    ░███  ░███         ░███        
-//  █████   █████ █████        █████       
-// ░░░░░   ░░░░░ ░░░░░        ░░░░░        
-                                        
+//  ░███████████  ░██████████  ░██████████
+//  ░███░░░░░███  ░███░░░░░░   ░███░░░░░░
+//  ░███    ░███  ░███         ░███
+//  █████   █████ █████        █████
+// ░░░░░   ░░░░░ ░░░░░        ░░░░░
 
 // Whenever a malloc fail, we exit and free everything
-int	exit_n_clean(t_app *app)
+int exit_n_clean(t_app *app)
 {
 	if (!app)
 		return (0);
@@ -30,11 +30,11 @@ int	exit_n_clean(t_app *app)
 }
 
 // Create the window
-t_app	*create_app(void)
+t_app *create_app(void)
 {
-	t_app	*app;
-	char	*p;
-	char	*(*f)(void *, int *, int *, int *);
+	t_app *app;
+	char *p;
+	char *(*f)(void *, int *, int *, int *);
 
 	app = malloc(sizeof(t_app));
 	if (!app)
@@ -55,6 +55,6 @@ t_app	*create_app(void)
 		exit_n_clean(app);
 
 	// init objects
-	app->global_cam = (t_camera){{0,0,0}, {0,0,1}, {1,0,0}, {0,1,0}, 70};
+	app->global_cam = (t_camera){{0, 0, 0}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}, 70};
 	return (app);
 }

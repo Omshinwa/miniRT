@@ -2,15 +2,15 @@
 #include "../draw/draw.h"
 #include "../app/app.h"
 
-//  █████   █████    ███████       ███████    █████   ████  █████████ 
+//  █████   █████    ███████       ███████    █████   ████  █████████
 // ▒▒███   ▒▒███   ███▒▒▒▒▒███   ███▒▒▒▒▒███ ▒▒███   ███▒  ███▒▒▒▒▒███
-//  ▒███    ▒███  ███     ▒▒███ ███     ▒▒███ ▒███  ███   ▒███    ▒▒▒ 
-//  ▒███████████ ▒███      ▒███▒███      ▒███ ▒███████    ▒▒█████████ 
+//  ▒███    ▒███  ███     ▒▒███ ███     ▒▒███ ▒███  ███   ▒███    ▒▒▒
+//  ▒███████████ ▒███      ▒███▒███      ▒███ ▒███████    ▒▒█████████
 //  ▒███▒▒▒▒▒███ ▒███      ▒███▒███      ▒███ ▒███▒▒███    ▒▒▒▒▒▒▒▒███
 //  ▒███    ▒███ ▒▒███     ███ ▒▒███     ███  ▒███ ▒▒███   ███    ▒███
-//  █████   █████ ▒▒▒███████▒   ▒▒▒███████▒   █████ ▒▒████▒▒█████████ 
-// ▒▒▒▒▒   ▒▒▒▒▒    ▒▒▒▒▒▒▒       ▒▒▒▒▒▒▒    ▒▒▒▒▒   ▒▒▒▒  ▒▒▒▒▒▒▒▒▒  
-                                                   
+//  █████   █████ ▒▒▒███████▒   ▒▒▒███████▒   █████ ▒▒████▒▒█████████
+// ▒▒▒▒▒   ▒▒▒▒▒    ▒▒▒▒▒▒▒       ▒▒▒▒▒▒▒    ▒▒▒▒▒   ▒▒▒▒  ▒▒▒▒▒▒▒▒▒
+
 #include <stdio.h>
 
 static void print_cam(t_app *app)
@@ -19,11 +19,11 @@ static void print_cam(t_app *app)
 	printf("fov: %i \n", app->global_cam.fov);
 }
 
-int	on_mouse_input(int keycode, int mouse_x, int mouse_y, t_app *app)
+int on_mouse_input(int keycode, int mouse_x, int mouse_y, t_app *app)
 {
-	(void) mouse_x;
-	(void) mouse_y;
-	(void) app;
+	(void)mouse_x;
+	(void)mouse_y;
+	(void)app;
 	if (keycode == MOUSE_WHEEL_UP)
 		app->global_cam.pos.z += C_KEY_STRENGTH;
 	else if (keycode == MOUSE_WHEEL_DN)
@@ -37,13 +37,13 @@ int	on_mouse_input(int keycode, int mouse_x, int mouse_y, t_app *app)
 	return (0);
 }
 
-int	on_no_input(t_app *app)
+int on_no_input(t_app *app)
 {
-	(void) app;
+	(void)app;
 	return (0);
 }
 
-int	on_key_input(int keycode, t_app	*app)
+int on_key_input(int keycode, t_app *app)
 {
 	if (keycode == ESC_KEY)
 		exit_n_clean(app);
@@ -74,5 +74,4 @@ int	on_key_input(int keycode, t_app	*app)
 	print_cam(app);
 	redraw(app);
 	return (0);
-	
 }

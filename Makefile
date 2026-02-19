@@ -25,6 +25,7 @@ all: $(NAME)
 $(NAME): $(OBJECT_FILES) Makefile $(LIBFT_A) $(MINILIBX_A)
 	$(LINK_CMD) $(OBJECT_FILES) $(LIBFT_A) $(MINILIBX_A) -o $(NAME)
 
+# compilation
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	mkdir -p $(dir $@)
 	$(CMPL_CMD) -c $< -o $@
