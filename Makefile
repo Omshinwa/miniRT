@@ -5,6 +5,7 @@ SRC =	main.c \
 		draw/draw.c \
 		hooks/hooks.c \
 		math/math.c \
+		raytrace/raytrace.c \
 
 OBJ = $(SRC:.c=.o)
 

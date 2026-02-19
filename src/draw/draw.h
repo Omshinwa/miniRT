@@ -1,8 +1,9 @@
 #ifndef DRAW_H
 #define DRAW_H
 
-#include "../main.h"
-#include "../math/math.h"
+#include "../raytrace/raytrace.h"
+#include "../../minilibx-linux/mlx.h"
+#include "../app/app.h"
 
 void redraw(t_app *app);
 

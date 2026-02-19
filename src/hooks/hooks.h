@@ -1,7 +1,8 @@
 #ifndef HOOKS_H
 #define HOOKS_H
 
-#include "../main.h"
+#include "../draw/draw.h"
+#include "../app/app.h"
 
 int on_mouse_input(int keycode, int mouse_x, int mouse_y, t_app *app);
 int on_no_input(t_app *app);

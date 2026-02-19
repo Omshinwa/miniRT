@@ -1,6 +1,5 @@
+#include "../main.h"
 #include "draw.h"
-
-#include "../../minilibx-linux/mlx.h"
 
 //  ██████████   ███████████     █████████   █████   ███   █████
 // ░░███░░░░███ ░░███░░░░░███   ███░░░░░███ ░░███   ░███  ░░███
@@ -35,7 +34,7 @@ void redraw(t_app *app)
 		y = -1;
 		while (++y < WINDOW_Y)
 		{
-			color = calc_raytrace(app, x, y);
+			color = calc_raytrace(app->global_cam, x, y);
 			set_image_pixel_at(app, x, y, color);
 		}
 	}

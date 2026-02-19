@@ -10,13 +10,9 @@
 // faire une equation (pour chaque object) qui verifie la collision
 // dessiner le pixel.
 
-#include "main.h"
-#include "hooks/hooks.h"
-#include "app/app.h"
-#include "draw/draw.h"
-
-#include "../minilibx-linux/mlx.h"
 #include <stdio.h>
+
+#include "main.h"
 
 t_sphere g_s = {{0, 0, 100}, 10};
 t_sphere g_light = {{0, 20, 100}, 10};
