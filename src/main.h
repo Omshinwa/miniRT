@@ -1,3 +1,6 @@
+#ifndef MAIN_H
+#define MAIN_H
+
 #define WINDOW_X 800
 #define WINDOW_Y 600
 #define WINDOW_RATIO (float)WINDOW_X/(float)WINDOW_Y
@@ -134,3 +137,9 @@ typedef struct s_app
 
 	// lumiere ambiante
 }	t_app;
+
+
+extern t_sphere g_s;
+extern t_sphere g_light;
+
+#endif

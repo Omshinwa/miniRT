@@ -1,64 +1,38 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: dasamuel <dasamuel@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/09/30 15:04:13 by wiwu              #+#    #+#              #
-#    Updated: 2026/01/15 11:45:48 by dasamuel         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+NAME = miniRT
 
-.PHONY: all clean fclean re bonus
+SRC =	main.c \
+		app/app.c \
+		draw/draw.c \
+		hooks/hooks.c \
+		math/math.c \
 
-GREEN	= \033[0;32m
-RED		= \033[0;31m
-RESET	= \033[0m
-TITLE	= \033[1;32m
+OBJ = $(SRC:.c=.o)
 
-NAME		=	miniRT
-# -Werror 
-CC			=	cc -Wall -Wextra -g3 #-Ofast -march=native -mtune=native -ffast-math -funroll-loops
-LINK_FLAG	=	-lm -lXext -lX11
+SRC_DIR = src
+OBJ_DIR = build
 
-SRC_FILES	=	main.c
-HEADER_FILES =	main.h
+SOURCE_FILES = $(addprefix $(SRC_DIR)/, $(SRC))
+OBJECT_FILES = $(addprefix $(OBJ_DIR)/, $(OBJ))
+DEPENDANCIES = $(OBJECT_FILES:.o=.d)
 
-OBJ_FILES	=	$(SRC_FILES:.c=.o)
-SRC_FOLDER	=	src/
-OBJ_FOLDER	=	obj/
-INC_FOLDER	=	include/
+CMPL_CMD = cc -Wall -Wextra -Werror -g3 -MMD -MP #-Ofast -march=native -mtune=native -ffast-math -funroll-loops
+LINK_CMD = cc -lm -lXext -lX11
 
-LIBFT_DIR = libft
-LIBFT_A = $(LIBFT_DIR)/libft.a
-MINILIBX = minilibx-linux
-MINILIBX_A = $(MINILIBX)/libmlx.a
-
-SOURCES	= $(addprefix $(SRC_FOLDER),$(SRC_FILES))
-OBJECTS	= $(addprefix $(OBJ_FOLDER),$(OBJ_FILES))
-HEADERS = $(addprefix $(INC_FOLDER),$(HEADER_FILES))
-
-# RULES
-
+# Rules
 all: $(NAME)
 
-$(NAME): $(OBJECTS) $(LIBFT_A) $(MINILIBX_A)
-	$(CC) $(OBJECTS) $(LIBFT_A) $(MINILIBX_A) $(LINK_FLAG) -o $(NAME)
-# 	echo "$(GREEN)✔ Successfully compiled$(RESET)"
-# 	echo
+# linking
+$(NAME): $(OBJECT_FILES) Makefile $(LIBFT_A) $(MINILIBX_A)
+	$(LINK_CMD) $(OBJECT_FILES) $(LIBFT_A) $(MINILIBX_A) -o $(NAME)
 
-$(OBJ_FOLDER)%.o: $(SRC_FOLDER)%.c $(HEADERS)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	mkdir -p $(dir $@)
-	$(CC) -I$(INC_FOLDER) -c $< -o $@
+	$(CMPL_CMD) -c $< -o $@
 
-$(LIBFT_A):
-	$(MAKE) -C $(LIBFT_DIR)
-$(MINILIBX_A):
-	$(MAKE) -C $(MINILIBX)
-	
+-include $(DEPENDANCIES)
+
 clean:
-	rm -rf $(OBJ_FOLDER)
+	rm -rf $(OBJ_DIR)
 	$(MAKE) -C $(LIBFT_DIR) clean
 	$(MAKE) -C $(MINILIBX) clean
 
@@ -69,12 +43,16 @@ fclean: clean
 
 re: fclean all
 
-bonus: $(NAME)_bonus
 
-run: all
-	./$(NAME)
+# library dependencies
+LIBFT_DIR = libft
+LIBFT_A = $(LIBFT_DIR)/libft.a
+MINILIBX = minilibx-linux
+MINILIBX_A = $(MINILIBX)/libmlx.a
 
-$(NAME)_bonus: $(OBJECTS) $(LIBFT_A)
-	@$(CC) $(CFLAGS) $(OBJECTS) $(LIBFT_A) $(LINK_FLAG) -o $(NAME)_bonus
-	@echo "$(GREEN)✔ Successfully compiled$(RESET)"
-	@echo
+$(LIBFT_A):
+	$(MAKE) -C $(LIBFT_DIR)
+$(MINILIBX_A):
+	$(MAKE) -C $(MINILIBX)
+
+.PHONY: all clean fclean re
