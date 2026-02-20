@@ -120,11 +120,9 @@ int calc_raytrace(t_env3d *env, int x, int y)
 	t_vec3 color;
 	
 	color = (t_vec3){0,0,0};
-	if (best_intersex >= 0.0f)
-	{
-		float distance = fmaxf(0, 255.0f - best_intersex);
-		color = (t_vec3){distance/255.0f, distance/255.0f, distance/255.0f}; // gray
-		color = color_mult(color, closest_obj.color);
-	}
+	float distance = fmaxf(0, 255.0f - best_intersex);
+	color = (t_vec3){distance/255.0f, distance/255.0f, distance/255.0f}; // gray
+	color = color_mult(color, closest_obj.color);
+
 	return (to_color(color));
 }
