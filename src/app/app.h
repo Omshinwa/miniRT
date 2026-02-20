@@ -5,22 +5,14 @@
 #include "../../minilibx-linux/mlx.h"
 #include <sys/time.h>
 
+#include "../env3d/env3d.h"
+
 typedef struct s_list_container
 {
 	t_obj_type type;
 	t_any_obj obj;
 	struct s_object *next;
 } t_list_container;
-
-// Camera is defined by a bunch of stuff i dont understand
-typedef struct s_camera
-{
-	t_vec3 pos;
-	t_vec3 forward; // normalized direction vector
-	t_vec3 right;	// perpendicular to forward & up
-	t_vec3 up;		// camera's up direction
-	int fov;		// in degrees
-} t_camera;
 
 typedef struct s_app
 {
@@ -33,17 +25,9 @@ typedef struct s_app
 	int size_line;
 	int endian;
 
+	t_env3d *env3d;
+
 	struct timeval time;
-
-	t_camera global_cam;
-	// pointeur a la camera
-
-	// liste des objets a dessiner
-	// t_node_obj
-
-	// liste des lumieres
-
-	// lumiere ambiante
 } t_app;
 
 // typedef struct s_minilib_interface
@@ -62,5 +46,7 @@ extern t_sphere g_s;
 
 int exit_n_clean(t_app *app);
 t_app *create_app(void);
+
+void hook_everything(t_app *app);
 
 #endif

@@ -24,6 +24,8 @@ int exit_n_clean(t_app *app)
 		mlx_destroy_display(app->mlx_ptr);
 		free(app->mlx_ptr);
 	}
+	if (app->env3d)
+		free(app->env3d);
 	free(app);
 	exit(0);
 	return (0);
@@ -33,8 +35,6 @@ int exit_n_clean(t_app *app)
 t_app *create_app(void)
 {
 	t_app *app;
-	char *p;
-	char *(*f)(void *, int *, int *, int *);
 
 	app = malloc(sizeof(t_app));
 	if (!app)
@@ -44,17 +44,19 @@ t_app *create_app(void)
 		exit_n_clean(app);
 	app->win_ptr = mlx_new_window(app->mlx_ptr, WINDOW_X, WINDOW_Y, "YAAAAAAY");
 	app->img_ptr = mlx_new_image(app->mlx_ptr, WINDOW_X, WINDOW_Y);
-	if (!app->img_ptr || !app->win_ptr)
+	if (!app->img_ptr || !app->win_ptr || gettimeofday(&app->time, NULL) == -1)
 		exit_n_clean(app);
-	if (gettimeofday(&app->time, NULL) == -1)
-		exit_n_clean(app);
-	f = mlx_get_data_addr;
-	p = f(app->img_ptr, &app->pixel_depth, &app->size_line, &app->endian);
-	app->first_pixel = p;
+	app->first_pixel = mlx_get_data_addr(app->img_ptr, &app->pixel_depth,
+										 &app->size_line, &app->endian);
 	if (!app->first_pixel)
 		exit_n_clean(app);
 
-	// init objects
-	app->global_cam = (t_camera){{0, 0, 0}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}, 70};
+	// init env3d
+	app->env3d = malloc(sizeof(t_env3d));
+	if (!app->env3d)
+		exit_n_clean(app);
+
+	app->env3d->global_cam = (t_camera){{0, 0, 0}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}, 70};
+	hook_everything(app);
 	return (app);
 }

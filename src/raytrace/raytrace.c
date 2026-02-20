@@ -57,9 +57,6 @@ t_vec3 get_direction_vector(t_camera camera, int pixel_x, int pixel_y)
 	return (vec3_normalize(D));
 }
 
-// Arguments:
-//    ORIGIN and D (direction vector) of a ray: defined as origin + D*t, t is time
-//    a sphere
 // Returns the nearest collision point t, or -1 if None
 float intersect_sphere(t_vec3 origin, t_vec3 D, t_sphere sphere)
 {
@@ -88,9 +85,10 @@ float intersect_sphere(t_vec3 origin, t_vec3 D, t_sphere sphere)
 }
 
 // return a Color
-int calc_raytrace(t_camera cam, int x, int y)
+int calc_raytrace(t_env3d *env, int x, int y)
 {
 	float intersection;
+	t_camera cam = env->global_cam;
 
 	intersection = intersect_sphere(cam.pos, get_direction_vector(cam, x, y), g_s);
 

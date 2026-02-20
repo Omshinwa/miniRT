@@ -2,8 +2,8 @@ NAME = miniRT
 
 SRC =	main.c \
 		app/app.c \
+		app/hooks.c \
 		draw/draw.c \
-		hooks/hooks.c \
 		math/math.c \
 		raytrace/raytrace.c \
 

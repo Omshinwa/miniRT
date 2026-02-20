@@ -11,6 +11,16 @@
 
 // Returns the dot product of two vectors
 float dot_product(t_vec3 a, t_vec3 b) { return (a.x * b.x + a.y * b.y + a.z * b.z); }
+// Cross product: A × B
+t_vec3 vec3_cross(t_vec3 a, t_vec3 b)
+{
+    return (t_vec3){
+        a.y * b.z - a.z * b.y,
+        a.z * b.x - a.x * b.z,
+        a.x * b.y - a.y * b.x
+    };
+}
+
 // A + B
 t_vec3 vec3_add_op(t_vec3 a, t_vec3 b) { return (t_vec3){a.x + b.x, a.y + b.y, a.z + b.z}; }
 // V*s

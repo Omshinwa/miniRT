@@ -24,11 +24,7 @@ int main(void)
 	app = create_app();
 	if (!app)
 		return (-1);
-	mlx_key_hook(app->win_ptr, on_key_input, app);
-	mlx_mouse_hook(app->win_ptr, on_mouse_input, app);
-	mlx_loop_hook(app->mlx_ptr, on_no_input, app);
 	mlx_hook(app->win_ptr, 17, 0, exit_n_clean, app);
-	printf("cc\n");
 	redraw(app);
 	mlx_loop(app->mlx_ptr);
 }

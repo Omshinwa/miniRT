@@ -1,5 +1,6 @@
 #include "../main.h"
-#include "hooks.h"
+#include "../draw/draw.h"
+#include "../app/app.h"
 
 // keycodes (X11)
 static const int g_ESC_KEY = 65307;
@@ -48,68 +49,81 @@ static const int g_KEY_STRENGTH = 10;
 
 #include <stdio.h>
 
-static void print_cam(t_app *app)
+static void print_cam(t_camera cam)
 {
-	printf("pos: %f %f %f ", app->global_cam.pos.x, app->global_cam.pos.y, app->global_cam.pos.z);
-	printf("fov: %i \n", app->global_cam.fov);
+	printf("pos: %f %f %f ", cam.pos.x, cam.pos.y, cam.pos.z);
+	printf("fov: %i \n", cam.fov);
 }
 
-int on_mouse_input(int keycode, int mouse_x, int mouse_y, t_app *app)
+static int on_mouse_input(int keycode, int mouse_x, int mouse_y, t_app *app)
 {
 	(void)mouse_x;
 	(void)mouse_y;
 	(void)app;
+	t_camera *cam = &app->env3d->global_cam;
+
 	if (keycode == g_MOUSE_WHEEL_UP)
-		app->global_cam.pos.z += g_KEY_STRENGTH;
+		cam->pos.z += g_KEY_STRENGTH;
+	// env->global_cam.pos.z += g_KEY_STRENGTH;
 	else if (keycode == g_MOUSE_WHEEL_DN)
-		app->global_cam.pos.z -= g_KEY_STRENGTH;
+		cam->pos.z -= g_KEY_STRENGTH;
+	// env->global_cam.pos.z -= g_KEY_STRENGTH;
 	else if (keycode == g_MOUSE_LEFT)
 		printf("sphere: %f %f %f \n", g_s.pos.x, g_s.pos.y, g_s.pos.z);
 	else
 		printf("got %i key input \n", keycode);
 	redraw(app);
-	print_cam(app);
+	print_cam(*cam);
 	return (0);
 }
 
-int on_no_input(t_app *app)
+static int on_no_input(t_app *app)
 {
 	(void)app;
 	return (0);
 }
 
-int on_key_input(int keycode, t_app *app)
+static int on_key_input(int keycode, t_app *app)
 {
+	t_env3d *env = app->env3d;
+
 	if (keycode == g_ESC_KEY)
 		exit_n_clean(app);
 	printf("got %i key input \n", keycode);
 
 	// Change cam orientation
 	if (keycode == g_KEY_W)
-		app->global_cam.pos.z += g_KEY_STRENGTH;
+		env->global_cam.pos.z += g_KEY_STRENGTH;
 	else if (keycode == g_KEY_S)
-		app->global_cam.pos.z -= g_KEY_STRENGTH;
+		env->global_cam.pos.z -= g_KEY_STRENGTH;
 	else if (keycode == g_KEY_A)
-		app->global_cam.pos.x -= g_KEY_STRENGTH * WINDOW_RATIO;
+		env->global_cam.pos.x -= g_KEY_STRENGTH * WINDOW_RATIO;
 	else if (keycode == g_KEY_D)
-		app->global_cam.pos.x += g_KEY_STRENGTH * WINDOW_RATIO;
+		env->global_cam.pos.x += g_KEY_STRENGTH * WINDOW_RATIO;
 
 	// Change cam position
 	else if (keycode == g_KEY_ARROW_UP)
-		app->global_cam.pos.y += g_KEY_STRENGTH;
+		env->global_cam.pos.y += g_KEY_STRENGTH;
 	else if (keycode == g_KEY_ARROW_DOWN)
-		app->global_cam.pos.y -= g_KEY_STRENGTH;
+		env->global_cam.pos.y -= g_KEY_STRENGTH;
 	else if (keycode == g_KEY_ARROW_LEFT)
-		app->global_cam.pos.x -= g_KEY_STRENGTH * WINDOW_RATIO;
+		env->global_cam.pos.x -= g_KEY_STRENGTH * WINDOW_RATIO;
 	else if (keycode == g_KEY_ARROW_RIGHT)
-		app->global_cam.pos.x += g_KEY_STRENGTH * WINDOW_RATIO;
+		env->global_cam.pos.x += g_KEY_STRENGTH * WINDOW_RATIO;
 
 	// FOV
 	else if (keycode == g_NUMPAD_PLUS)
-		app->global_cam.fov += 10;
+		env->global_cam.fov += 10;
 	else if (keycode == g_NUMPAD_MINUS)
-		app->global_cam.fov -= 10;
-	print_cam(app);
+		env->global_cam.fov -= 10;
+	print_cam(env->global_cam);
 	redraw(app);
 	return (0);
+}
+
+void hook_everything(t_app *app)
+{
+	mlx_key_hook(app->win_ptr, on_key_input, app);
+	mlx_mouse_hook(app->win_ptr, on_mouse_input, app);
+	mlx_loop_hook(app->mlx_ptr, on_no_input, app);
 }
