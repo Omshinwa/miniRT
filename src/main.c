@@ -19,7 +19,7 @@ int main(void)
 	t_app *app;
 
 	app = create_app();
-	setup_env3d(app, "filename");
+	setup_scene(app, "filename");
 	if (!app)
 		return (-1);
 	mlx_hook(app->win_ptr, 17, 0, exit_n_clean, app);

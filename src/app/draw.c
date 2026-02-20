@@ -36,7 +36,7 @@ void redraw(t_app *app)
 		y = -1;
 		while (++y < WINDOW_Y)
 		{
-			color = calc_raytrace(app->env3d, x, y);
+			color = calc_raytrace(app->scene, x, y);
 			set_image_pixel_at(app, x, y, color);
 		}
 	}

@@ -1,7 +1,7 @@
 // Camera rotation helpers
 
 #include "../main.h"
-#include "env3d.h"
+#include "scene.h"
 
 // rotate vector v around unit axis k by `angle` (Rodrigues' rotation)
 static void rotate_around_axis(t_vec3 *v, t_vec3 k, float angle)

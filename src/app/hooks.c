@@ -1,6 +1,6 @@
 #include "../main.h"
 #include "../app/app.h"
-#include "../env3d/env3d.h"
+#include "../scene/scene.h"
 
 // keycodes (X11)
 static const int g_ESC_KEY = 65307;
@@ -61,7 +61,7 @@ static int on_mouse_input(int keycode, int mouse_x, int mouse_y, t_app *app)
 	(void)mouse_x;
 	(void)mouse_y;
 	(void)app;
-	t_camera *cam = &app->env3d->global_cam;
+	t_camera *cam = &app->scene->global_cam;
 	t_vec3 delta;
 
 	if (keycode == g_MOUSE_WHEEL_UP)
@@ -91,8 +91,8 @@ static int on_no_input(t_app *app)
 
 static int on_key_input(int keycode, t_app *app)
 {
-	t_env3d *env = app->env3d;
-	t_camera *cam = &app->env3d->global_cam;
+	t_scene *env = app->scene;
+	t_camera *cam = &app->scene->global_cam;
 
 	if (keycode == g_ESC_KEY)
 		exit_n_clean(app);

@@ -36,7 +36,7 @@ t_vec3 get_direction_vector(t_camera camera, int pixel_x, int pixel_y)
 
 	// Correct implementation of FOV -> scaling for rays, though i dont
 	// really understand it. TODO
-	float fov_rad = camera.fov * (3.14159265358979323846 / 180.0f);
+	float fov_rad = camera.fov * (PI / 180.0f);
 	float scale = tanf(fov_rad * 0.5f);
 	// My naive implementation
 	// float scale = (float)app->global_cam.fov/100;
@@ -96,7 +96,7 @@ static float get_intersection(t_camera cam, t_object obj, int x, int y)
 }
 
 // return the Color for a peculiar (x, y) pixel
-int calc_raytrace(t_env3d *env, int x, int y)
+int calc_raytrace(t_scene *env, int x, int y)
 {	
 	int	i;
 	t_object closest_obj;

@@ -24,11 +24,11 @@ int exit_n_clean(t_app *app)
 		mlx_destroy_display(app->mlx_ptr);
 		free(app->mlx_ptr);
 	}
-	if (app->env3d)
+	if (app->scene)
 	{
-		if (app->env3d->objects)
-			free(app->env3d->objects);
-		free(app->env3d);
+		if (app->scene->objects)
+			free(app->scene->objects);
+		free(app->scene);
 	}
 	free(app);
 	exit(0);

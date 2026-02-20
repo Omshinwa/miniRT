@@ -5,6 +5,7 @@
 #define WINDOW_X 800
 #define WINDOW_Y 600
 #define WINDOW_RATIO (float)WINDOW_X / (float)WINDOW_Y
+#define PI 3.14159265358979323846
 
 #include <stdlib.h>
 #include "../libft/libft.h"

@@ -1,5 +1,5 @@
-#ifndef ENV3D_H
-#define ENV3D_H
+#ifndef scene_H
+#define scene_H
 
 #include "../math/math.h"
 
@@ -64,7 +64,7 @@ typedef struct s_camera
 	int fov;		// in degrees
 } t_camera;
 
-typedef struct s_env3d
+typedef struct s_scene
 {
 	t_camera global_cam;
 	// pointeur vers un array d'objets a dessiner
@@ -74,7 +74,7 @@ typedef struct s_env3d
 
 	// lumiere ambiante
 
-} t_env3d;
+} t_scene;
 
 void camera_pitch(t_camera *cam, float angle);
 void camera_yaw(t_camera *cam, float angle);
