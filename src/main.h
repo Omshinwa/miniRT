@@ -11,7 +11,6 @@
 #include "../minilibx-linux/mlx.h"
 
 #include "math/math.h"
-#include "draw/draw.h"
 #include "app/app.h"
 #include "raytrace/raytrace.h"
 

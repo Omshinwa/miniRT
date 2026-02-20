@@ -23,11 +23,12 @@ typedef struct s_app
 	struct timeval time;
 } t_app;
 
-extern t_sphere g_s;
-
 int exit_n_clean(t_app *app);
 t_app *create_app(void);
 
 void hook_everything(t_app *app);
+void redraw(t_app *app);
+
+int setup_env3d(t_app *app, char* filename);
 
 #endif

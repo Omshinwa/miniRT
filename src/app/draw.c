@@ -1,5 +1,7 @@
 #include "../main.h"
-#include "draw.h"
+#include "../raytrace/raytrace.h"
+#include "../../minilibx-linux/mlx.h"
+#include "../app/app.h"
 
 //  ██████████   ███████████     █████████   █████   ███   █████
 // ░░███░░░░███ ░░███░░░░░███   ███░░░░░███ ░░███   ░███  ░░███

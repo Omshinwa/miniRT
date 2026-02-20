@@ -10,40 +10,6 @@ typedef struct s_vec3
 	float z;
 } t_vec3;
 
-typedef struct s_sphere
-{
-	t_vec3 pos;
-	float r;
-} t_sphere;
-
-typedef struct s_plane
-{
-	t_vec3 pos;
-	t_vec3 normal;
-} t_plane;
-
-typedef struct s_cylinder
-{
-	t_vec3 pos;
-	t_vec3 axis;
-	float radius;
-	float height;
-} t_cylinder;
-
-typedef union u_any_obj
-{
-	t_sphere sp;
-	t_plane pl;
-	t_cylinder cy;
-} t_any_obj;
-
-typedef enum e_obj_type
-{
-	OBJ_PLANE,
-	OBJ_SPHERE,
-	OBJ_CYLINDER,
-} t_obj_type;
-
 t_vec3 vec3_normalize(t_vec3 v);
 float dot_product(t_vec3 a, t_vec3 b);
 /* Cross product: a × b */
@@ -54,4 +20,6 @@ t_vec3 vec3_scale(t_vec3 v, float s);
 t_vec3 vec3_minus(t_vec3 a, t_vec3 b);
 float vec3_length(t_vec3 v);
 
+int		to_color(t_vec3 c);
+t_vec3	color_mult(t_vec3 a, t_vec3 b);
 #endif

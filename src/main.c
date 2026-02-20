@@ -14,14 +14,12 @@
 
 #include "main.h"
 
-t_sphere g_s = {{0, 0, 100}, 10};
-t_sphere g_light = {{0, 20, 100}, 10};
-
 int main(void)
 {
 	t_app *app;
 
 	app = create_app();
+	setup_env3d(app, "filename");
 	if (!app)
 		return (-1);
 	mlx_hook(app->win_ptr, 17, 0, exit_n_clean, app);

@@ -1,3 +1,11 @@
+# explanation camera movement
+	else if (keycode == g_KEY_ARROW_UP)
+    {
+        delta = vec3_scale(cam->up, g_MOV_STRENGTH);
+        cam->pos = vec3_add(cam->pos, delta);
+    }
+when we press up, we use cam->up's orientation vector. Not just camera.pos.y += g_MOV_STRENGTH!
+
 # Intersection sphere explanation:
 
 A ray is defined as
@@ -8,7 +16,9 @@ D the direction vector.
 t a parameter describing time.
 
 A sphere centered around the point C with radius r satisfies:
-`|P - C|² = r²`
+`(x - Cx)² + (y - Cy)² = r²`
+It can be rewritten in vector form as:
+`|P - C|² = r²`, with P(x, y)
 
 A point that is the intersection of both the ray and the sphere must
 verify both equations:
@@ -35,3 +45,7 @@ We solve it,
 If Δ<0: no intersection
 If Δ=0: one intersection (tangent)
 If Δ>0: two intersections
+
+# Rotation for camera
+
+https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula

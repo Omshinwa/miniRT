@@ -84,20 +84,47 @@ float intersect_sphere(t_vec3 origin, t_vec3 D, t_sphere sphere)
 	return t;
 }
 
-// return a Color
-int calc_raytrace(t_env3d *env, int x, int y)
+static float get_intersection(t_camera cam, t_object obj, int x, int y)
 {
-	float intersection;
-	t_camera cam = env->global_cam;
+	float	intersection;
+	
+	intersection = -1.0f;
+	if (obj.type == OBJ_SPHERE)
+		intersection = intersect_sphere(cam.pos, get_direction_vector(cam, x, y), obj.data.sphere);
+	// if PLANE, elif CYLINDER
+	return (intersection);
+}
 
-	intersection = intersect_sphere(cam.pos, get_direction_vector(cam, x, y), g_s);
-
-	int color = 0;
-	if (intersection >= 0.0f)
+// return the Color for a peculiar (x, y) pixel
+int calc_raytrace(t_env3d *env, int x, int y)
+{	
+	int	i;
+	t_object closest_obj;
+	float	best_intersex;
+	float	curr_intersex;
+	t_camera cam;
+	
+	cam = env->global_cam;
+	i = -1;
+	best_intersex = 9999;
+	while(++i < env->number_of_obj)
 	{
-		int shade = (int)fmax(0, 255 - (int)(intersection));
-		color = (shade << 16) | (shade << 8) | shade; // gray
-													  // color = (0xFFFFFF - (int)(intersection*intersection*100));
+		curr_intersex = get_intersection(cam, env->objects[i], x, y);
+		if (curr_intersex > 0 && curr_intersex < best_intersex) // found better
+		{
+			closest_obj = env->objects[i];
+			best_intersex = curr_intersex;
+		}
 	}
-	return (color);
+
+	t_vec3 color;
+	
+	color = (t_vec3){0,0,0};
+	if (best_intersex >= 0.0f)
+	{
+		float distance = fmaxf(0, 255.0f - best_intersex);
+		color = (t_vec3){distance/255.0f, distance/255.0f, distance/255.0f}; // gray
+		color = color_mult(color, closest_obj.color);
+	}
+	return (to_color(color));
 }

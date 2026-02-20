@@ -25,7 +25,11 @@ int exit_n_clean(t_app *app)
 		free(app->mlx_ptr);
 	}
 	if (app->env3d)
+	{
+		if (app->env3d->objects)
+			free(app->env3d->objects);
 		free(app->env3d);
+	}
 	free(app);
 	exit(0);
 	return (0);
@@ -36,7 +40,7 @@ t_app *create_app(void)
 {
 	t_app *app;
 
-	app = malloc(sizeof(t_app));
+	app = calloc(1, sizeof(t_app));
 	if (!app)
 		return (NULL);
 	app->mlx_ptr = mlx_init();
@@ -51,12 +55,6 @@ t_app *create_app(void)
 	if (!app->first_pixel)
 		exit_n_clean(app);
 
-	// init env3d
-	app->env3d = malloc(sizeof(t_env3d));
-	if (!app->env3d)
-		exit_n_clean(app);
-
-	app->env3d->global_cam = (t_camera){{0, 0, 0}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}, 70};
 	hook_everything(app);
 	return (app);
 }

@@ -1,5 +1,4 @@
 #include "../main.h"
-#include "../draw/draw.h"
 #include "../app/app.h"
 #include "../env3d/env3d.h"
 
@@ -31,7 +30,7 @@ static const int g_KEY_ARROW_DOWN = 65364;
 // static const int g_NUMPAD_MUL = 65450;
 
 // mouse buttons
-static const int g_MOUSE_LEFT = 1;
+// static const int g_MOUSE_LEFT = 1;
 // static const int g_MOUSE_MIDDLE = 2;
 // static const int g_MOUSE_RIGHT = 3;
 static const int g_MOUSE_WHEEL_UP = 4;
@@ -53,7 +52,7 @@ static const float g_ROT_STRENGTH = 0.05; // in radian
 
 static void print_cam(t_camera cam)
 {
-	printf("pos: %f %f %f ", cam.pos.x, cam.pos.y, cam.pos.z);
+	printf("pos: %3i %3i %3i ", (int)cam.pos.x, (int)cam.pos.y, (int)cam.pos.z);
 	printf("fov: %i \n", cam.fov);
 }
 
@@ -63,13 +62,20 @@ static int on_mouse_input(int keycode, int mouse_x, int mouse_y, t_app *app)
 	(void)mouse_y;
 	(void)app;
 	t_camera *cam = &app->env3d->global_cam;
+	t_vec3 delta;
 
 	if (keycode == g_MOUSE_WHEEL_UP)
-		cam->pos.z += g_MOV_STRENGTH;
+    {
+        delta = vec3_scale(cam->forward, g_MOV_STRENGTH);
+        cam->pos = vec3_add(cam->pos, delta);
+    }
 	else if (keycode == g_MOUSE_WHEEL_DN)
-		cam->pos.z -= g_MOV_STRENGTH;
-	else if (keycode == g_MOUSE_LEFT)
-		printf("sphere: %f %f %f \n", g_s.pos.x, g_s.pos.y, g_s.pos.z);
+    {
+        delta = vec3_scale(cam->forward, g_MOV_STRENGTH);
+        cam->pos = vec3_minus(cam->pos, delta);
+    }
+	// else if (keycode == g_MOUSE_LEFT)
+	// 	print info on the object being clicked on
 	else
 		printf("got %i key input \n", keycode);
 	redraw(app);
@@ -92,26 +98,38 @@ static int on_key_input(int keycode, t_app *app)
 		exit_n_clean(app);
 	printf("got %i key input \n", keycode);
 
+	t_vec3 delta;
 	// Change cam orientation
 	if (keycode == g_KEY_W)
 		camera_pitch(cam, g_ROT_STRENGTH);
 	else if (keycode == g_KEY_S)
 		camera_pitch(cam, -g_ROT_STRENGTH);
 	else if (keycode == g_KEY_A)
-		camera_yaw(cam, g_ROT_STRENGTH);
-	else if (keycode == g_KEY_D)
 		camera_yaw(cam, -g_ROT_STRENGTH);
+	else if (keycode == g_KEY_D)
+		camera_yaw(cam, g_ROT_STRENGTH);
 
 	// Change cam position
 	else if (keycode == g_KEY_ARROW_UP)
-		cam->pos.y += g_MOV_STRENGTH;
+    {
+        delta = vec3_scale(cam->up, g_MOV_STRENGTH);
+        cam->pos = vec3_add(cam->pos, delta);
+    }
 	else if (keycode == g_KEY_ARROW_DOWN)
-		cam->pos.y -= g_MOV_STRENGTH;
+    {
+        delta = vec3_scale(cam->up, g_MOV_STRENGTH);
+        cam->pos = vec3_minus(cam->pos, delta);
+    }
 	else if (keycode == g_KEY_ARROW_LEFT)
-		cam->pos.x -= g_MOV_STRENGTH * WINDOW_RATIO;
+	{
+		delta = vec3_scale(cam->right, g_MOV_STRENGTH * WINDOW_RATIO);
+		cam->pos = vec3_minus(cam->pos, delta);
+	}
 	else if (keycode == g_KEY_ARROW_RIGHT)
-		cam->pos.x += g_MOV_STRENGTH * WINDOW_RATIO;
-
+	{
+		delta = vec3_scale(cam->right, g_MOV_STRENGTH * WINDOW_RATIO);
+		cam->pos = vec3_add(cam->pos, delta);
+	}
 	// FOV
 	else if (keycode == g_NUMPAD_PLUS)
 		cam->fov += 10;
