@@ -14,7 +14,8 @@
 
 # UI / UX
 * click to target object, make it moveable
-* turn camera view
+* use mouse instead of keys to turn the cam around
+* display infos in the window
 
 # others
 * parse files

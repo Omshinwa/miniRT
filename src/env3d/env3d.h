@@ -3,6 +3,13 @@
 
 #include "../math/math.h"
 
+typedef struct s_list_container
+{
+	t_obj_type type;
+	t_any_obj obj;
+	struct s_object *next;
+} t_list_container;
+
 typedef struct s_camera
 {
 	t_vec3 pos;
@@ -26,7 +33,6 @@ typedef struct s_env3d
 
 } t_env3d;
 
-/* camera control helpers */
 void camera_pitch(t_camera *cam, float angle);
 void camera_yaw(t_camera *cam, float angle);
 void camera_roll(t_camera *cam, float angle);

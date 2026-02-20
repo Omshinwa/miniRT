@@ -49,9 +49,9 @@ float dot_product(t_vec3 a, t_vec3 b);
 /* Cross product: a × b */
 t_vec3 vec3_cross(t_vec3 a, t_vec3 b);
 
-t_vec3 vec3_add_op(t_vec3 a, t_vec3 b);
-t_vec3 vec3_scale_op(t_vec3 v, float s);
-t_vec3 vec3_minus_op(t_vec3 a, t_vec3 b);
+t_vec3 vec3_add(t_vec3 a, t_vec3 b);
+t_vec3 vec3_scale(t_vec3 v, float s);
+t_vec3 vec3_minus(t_vec3 a, t_vec3 b);
 float vec3_length(t_vec3 v);
 
 #endif

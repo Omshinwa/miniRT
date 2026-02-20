@@ -6,6 +6,7 @@ SRC =	main.c \
 		draw/draw.c \
 		math/math.c \
 		raytrace/raytrace.c \
+        env3d/camera.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -18,6 +19,12 @@ DEPENDANCIES = $(OBJECT_FILES:.o=.d)
 
 CMPL_CMD = cc -Wall -Wextra -Werror -g3 -MMD -MP #-Ofast -march=native -mtune=native -ffast-math -funroll-loops
 LINK_CMD = cc -lm -lXext -lX11
+
+# library dependencies
+LIBFT_DIR = libft
+LIBFT_A = $(LIBFT_DIR)/libft.a
+MINILIBX = minilibx-linux
+MINILIBX_A = $(MINILIBX)/libmlx.a
 
 # Rules
 all: $(NAME)
@@ -44,13 +51,6 @@ fclean: clean
 	$(MAKE) -C $(MINILIBX) clean
 
 re: fclean all
-
-
-# library dependencies
-LIBFT_DIR = libft
-LIBFT_A = $(LIBFT_DIR)/libft.a
-MINILIBX = minilibx-linux
-MINILIBX_A = $(MINILIBX)/libmlx.a
 
 $(LIBFT_A):
 	$(MAKE) -C $(LIBFT_DIR)
