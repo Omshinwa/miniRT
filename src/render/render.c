@@ -1,5 +1,6 @@
+#include "render.h"
 #include "../main.h"
-#include "../raytrace/raytrace.h"
+#include "../render/render.h"
 #include "../../minilibx-linux/mlx.h"
 #include "../app/app.h"
 
@@ -36,7 +37,7 @@ void redraw(t_app *app)
 		y = -1;
 		while (++y < WINDOW_Y)
 		{
-			color = calc_raytrace(app->scene, x, y);
+			color = calc_pixel_color(app->scene, x, y);
 			set_image_pixel_at(app, x, y, color);
 		}
 	}

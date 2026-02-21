@@ -8,11 +8,14 @@
 #define PI 3.14159265358979323846
 
 #include <stdlib.h>
+#include <unistd.h>
+// #include <sys/types.h>
+
 #include "../libft/libft.h"
 #include "../minilibx-linux/mlx.h"
 
 #include "math/math.h"
 #include "app/app.h"
-#include "raytrace/raytrace.h"
+#include "render/render.h"
 
 #endif

@@ -1,5 +1,5 @@
 #include "../main.h"
-#include "raytrace.h"
+#include "render.h"
 
 // Given a camera and a pixel position, returns D
 // D is the normalized directional vector from the camera to the pixel at z=1
@@ -84,45 +84,62 @@ float intersect_sphere(t_vec3 origin, t_vec3 D, t_sphere sphere)
 	return t;
 }
 
-static float get_intersection(t_camera cam, t_object obj, int x, int y)
+// Given a single object and a vector+origin
+// Return the INTERSECTION point (-1 if none)
+static float get_intersection(t_vec3 origin, t_vec3 vector, t_object obj)
 {
-	float	intersection;
-	
+	float intersection;
+
 	intersection = -1.0f;
 	if (obj.type == OBJ_SPHERE)
-		intersection = intersect_sphere(cam.pos, get_direction_vector(cam, x, y), obj.data.sphere);
+		intersection = intersect_sphere(origin, vector, obj.data.sphere);
 	// if PLANE, elif CYLINDER
 	return (intersection);
 }
 
-// return the Color for a peculiar (x, y) pixel
-int calc_raytrace(t_scene *env, int x, int y)
-{	
-	int	i;
-	t_object closest_obj;
-	float	best_intersex;
-	float	curr_intersex;
-	t_camera cam;
-	
-	cam = env->global_cam;
-	i = -1;
-	best_intersex = 9999;
-	while(++i < env->number_of_obj)
+// given a vector+origin, and the environment,
+// goes through the list of objects and return:
+// OBJ_HIT: the closest object hit (NULL if none)
+// DISTANCE: the distance it hit at (through output parameter)
+static t_object *get_hit(t_scene *scene, t_vec3 origin, t_vec3 d_vector, float *closest_dist)
+{
+	t_object *obj_hit;
+	float current_dist;
+
+	obj_hit = NULL;
+	*closest_dist = MAX_DRAW_DISTANCE;
+	for (int i = 0; i < scene->number_of_obj; ++i)
 	{
-		curr_intersex = get_intersection(cam, env->objects[i], x, y);
-		if (curr_intersex > 0 && curr_intersex < best_intersex) // found better
+		current_dist = get_intersection(origin, d_vector, scene->objects[i]);
+		if (current_dist > 0.0f && current_dist < *closest_dist)
 		{
-			closest_obj = env->objects[i];
-			best_intersex = curr_intersex;
+			*closest_dist = current_dist;
+			obj_hit = &scene->objects[i];
 		}
 	}
+	return (obj_hit);
+}
 
+// Given a x,y pixel coordinate, calculate its color
+int calc_pixel_color(t_scene *scene, int x, int y)
+{
+	t_vec3 d_vector;
 	t_vec3 color;
-	
-	color = (t_vec3){0,0,0};
-	float distance = fmaxf(0, 255.0f - best_intersex);
-	color = (t_vec3){distance/255.0f, distance/255.0f, distance/255.0f}; // gray
-	color = color_mult(color, closest_obj.color);
+	t_object *obj;
+	float dist;
 
-	return (to_color(color));
+	d_vector = get_direction_vector(scene->global_cam, x, y);
+	obj = get_hit(scene, scene->global_cam.pos, d_vector, &dist);
+	color = (t_vec3){0, 0, 0};
+
+	if (obj) // we hit something
+	{
+		float clamp;
+		clamp = fmaxf(0, 255.0f - dist);
+		color = (t_vec3){clamp / 255.0f, clamp / 255.0f, clamp / 255.0f}; // gray
+		color = color_mult(color, obj->color);
+	}
+	// if ambient light
+	color = vec3_add(color, scene->ambient_light);
+	return to_color_int(color);
 }

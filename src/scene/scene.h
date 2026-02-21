@@ -34,15 +34,15 @@ typedef struct s_cylinder
 
 typedef union u_any_obj
 {
-	t_sphere	sphere;
-	t_plane		plane;
-	t_cylinder	cylinder;
+	t_sphere sphere;
+	t_plane plane;
+	t_cylinder cylinder;
 } t_any_obj;
 
 typedef struct s_object
 {
-	t_obj_type 		type;
-	t_any_obj		data;
+	t_obj_type type;
+	t_any_obj data;
 	t_vec3 color;
 } t_object;
 
@@ -69,10 +69,11 @@ typedef struct s_scene
 	t_camera global_cam;
 	// pointeur vers un array d'objets a dessiner
 	t_object *objects;
-	int		number_of_obj;
+	int number_of_obj;
 	// liste des lumieres
 
-	// lumiere ambiante
+	// lumiere ambiente
+	t_vec3 ambient_light;
 
 } t_scene;
 
