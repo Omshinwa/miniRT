@@ -58,7 +58,7 @@ t_vec3 get_direction_vector(t_camera camera, int pixel_x, int pixel_y)
 }
 
 // Returns the nearest collision point t, or -1 if None
-float intersect_sphere(t_vec3 origin, t_vec3 D, t_sphere sphere)
+static float intersect_sphere(t_vec3 origin, t_vec3 D, t_sphere sphere)
 {
 	// L est le vecteur du centre de la sphere a la camera
 	// L = O - C

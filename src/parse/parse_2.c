@@ -40,29 +40,29 @@ typedef struct s_key
 /* ── key tables ──────────────────────────────────────────────────────────── */
 
 // C  -50.0,0,20        0,0,1     70
-static const t_key g_keys_camera[] = {
+static const t_key g_camera_format[] = {
 	{"pos", T_VEC, true, offsetof(t_camera, pos)},
 	{"dir", T_UNIT, true, offsetof(t_camera, forward)},
 	{"fov", T_FOV, true, offsetof(t_camera, fov)},
 	{NULL, T_INVALID, false, 0}};
 
-static const t_key g_keys_light[] = {
+static const t_key g_light_format[] = {
 	{"pos", T_VEC, true, offsetof(t_light, pos)},
 	{"brightness", T_FLOAT, true, offsetof(t_light, brightness)},
 	{"color", T_RGB, false, offsetof(t_light, color)},
 	{NULL, T_INVALID, false, 0}};
 
-static const t_key g_keys_sphere[] = {
+static const t_key g_sphere_format[] = {
 	{"center", T_VEC, true, offsetof(t_sphere, pos)},
 	{"diameter", T_DIAMETER, true, offsetof(t_sphere, r)},
 	{NULL, T_INVALID, false, 0}};
 
-static const t_key g_keys_plane[] = {
+static const t_key g_plane_format[] = {
 	{"point", T_VEC, true, offsetof(t_plane, pos)},
 	{"normal", T_UNIT, true, offsetof(t_plane, normal)},
 	{NULL, T_INVALID, false, 0}};
 
-static const t_key g_keys_cylinder[] = {
+static const t_key g_cylinder_format[] = {
 	{"center", T_VEC, true, offsetof(t_cylinder, pos)},
 	{"axis", T_UNIT, true, offsetof(t_cylinder, axis)},
 	{"diameter", T_DIAMETER, true, offsetof(t_cylinder, radius)},
@@ -71,6 +71,7 @@ static const t_key g_keys_cylinder[] = {
 
 /* ── token converter ─────────────────────────────────────────────────────── */
 
+// FIELD is where to write the converted value
 static bool convert_token(const char *tok, t_token_type type, void *field)
 {
 	t_vec3 v;
@@ -160,16 +161,24 @@ static void free_tokens(char **tokens)
 	free(tokens);
 }
 
-static void camera_derive_basis(t_camera *cam)
+// Because we are only given the forward vector, we derive the up and right from
+// it.
+static int camera_derive_basis(t_camera *cam)
 {
 	t_vec3 world_up;
 
+	if (vec3_length(cam->forward) < 0.99 || (vec3_length(cam->forward) > 1.01))
+	{
+		printf("Cameria orientation vector isn't normalized.\n");
+		return (1);
+	}
 	world_up = (t_vec3){0, 1, 0};
 	/* if forward is almost parallel to world_up, use a different reference */
 	if (fabsf(dot_product(cam->forward, world_up)) > 0.99f)
 		world_up = (t_vec3){0, 0, 1};
-	cam->right = vec3_normalize(vec3_cross(cam->forward, world_up));
-	cam->up = vec3_normalize(vec3_cross(cam->right, cam->forward));
+	cam->right = vec3_normalize(vec3_cross(world_up, cam->forward));
+	cam->up = vec3_normalize(vec3_cross(cam->forward, cam->right));
+	return (0);
 }
 
 /* ── object helpers ──────────────────────────────────────────────────────── */
@@ -210,35 +219,36 @@ static bool parse_line(char *line, t_scene *scene)
 
 	if (ft_strncmp(tokens[0], "C", 2) == 0)
 	{
-		if (parse_fields(tokens + 1, g_keys_camera, &scene->global_cam) < 0)
+		if (parse_fields(tokens + 1, g_camera_format, &scene->global_cam) < 0)
 			return (free_tokens(tokens), false);
-		camera_derive_basis(&scene->global_cam);
+		if (camera_derive_basis(&scene->global_cam))
+			return (free_tokens(tokens), false);
 	}
 	else if (ft_strncmp(tokens[0], "L", 2) == 0)
 	{
 		light = (t_light){0};
-		if (parse_fields(tokens + 1, g_keys_light, &light) < 0)
+		if (parse_fields(tokens + 1, g_light_format, &light) < 0)
 			return (free_tokens(tokens), false);
 		(void)light; /* TODO: push to scene->lights */
 	}
 	else if (ft_strncmp(tokens[0], "sp", 3) == 0)
 	{
 		obj = (t_object){OBJ_SPHERE, {0}, {0}};
-		color_idx = parse_fields(tokens + 1, g_keys_sphere, &obj.data.sphere);
+		color_idx = parse_fields(tokens + 1, g_sphere_format, &obj.data.sphere);
 		if (color_idx < 0 || !tokens[1 + color_idx] || !convert_token(tokens[1 + color_idx], T_RGB, &obj.color) || !push_object(scene, obj))
 			return (free_tokens(tokens), false);
 	}
 	else if (ft_strncmp(tokens[0], "pl", 3) == 0)
 	{
 		obj = (t_object){OBJ_PLANE, {0}, {0}};
-		color_idx = parse_fields(tokens + 1, g_keys_plane, &obj.data.plane);
+		color_idx = parse_fields(tokens + 1, g_plane_format, &obj.data.plane);
 		if (color_idx < 0 || !tokens[1 + color_idx] || !convert_token(tokens[1 + color_idx], T_RGB, &obj.color) || !push_object(scene, obj))
 			return (free_tokens(tokens), false);
 	}
 	else if (ft_strncmp(tokens[0], "cy", 3) == 0)
 	{
 		obj = (t_object){OBJ_CYLINDER, {0}, {0}};
-		color_idx = parse_fields(tokens + 1, g_keys_cylinder, &obj.data.cylinder);
+		color_idx = parse_fields(tokens + 1, g_cylinder_format, &obj.data.cylinder);
 		if (color_idx < 0 || !tokens[1 + color_idx] || !convert_token(tokens[1 + color_idx], T_RGB, &obj.color) || !push_object(scene, obj))
 			return (free_tokens(tokens), false);
 	}
