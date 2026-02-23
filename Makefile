@@ -3,11 +3,15 @@ NAME = miniRT
 SRC =	main.c \
 		app/app.c \
 		app/hooks.c \
-		app/parse.c \
+		parse/parse.c \
+		parse/parse_2.c \
+		parse/parse_utils.c \
+		parse/get_next_line.c \
 		math/math.c \
 		render/raytrace.c \
 		render/render.c \
 		scene/camera.c
+# SRC = *.c
 OBJ = $(SRC:.c=.o)
 
 SRC_DIR = src

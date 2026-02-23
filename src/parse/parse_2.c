@@ -5,11 +5,10 @@
 /* Each line is split into space-separated tokens with ft_split.              */
 /* A key table per identifier maps token index → (type, dst offset).         */
 /* A read_float() cursor-reader replaces strtof/strtol/sscanf/strtok_r.      */
-/* Only libft + ft_memcpy / ft_strncmp / ft_isdigit are used.                */
 /* ========================================================================== */
 
 #include "../main.h"
-#include "app.h"
+#include "parse.h"
 #include <fcntl.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -40,6 +39,7 @@ typedef struct s_key
 
 /* ── key tables ──────────────────────────────────────────────────────────── */
 
+// C  -50.0,0,20        0,0,1     70
 static const t_key g_keys_camera[] = {
 	{"pos", T_VEC, true, offsetof(t_camera, pos)},
 	{"dir", T_UNIT, true, offsetof(t_camera, forward)},
@@ -68,88 +68,6 @@ static const t_key g_keys_cylinder[] = {
 	{"diameter", T_DIAMETER, true, offsetof(t_cylinder, radius)},
 	{"height", T_FLOAT, true, offsetof(t_cylinder, height)},
 	{NULL, T_INVALID, false, 0}};
-
-/* ── low-level number readers ────────────────────────────────────────────── */
-/*
- * read_float: parse one float from *s, advance *s past the digits.
- * Returns 1 on success, 0 on failure.
- */
-static int read_float(const char **s, float *out)
-{
-	float result;
-	float frac;
-	int sign;
-
-	result = 0.0f;
-	sign = 1;
-	if (**s == '-')
-	{
-		sign = -1;
-		(*s)++;
-	}
-	else if (**s == '+')
-		(*s)++;
-	if (!ft_isdigit(**s) && **s != '.')
-		return (0);
-	while (ft_isdigit(**s))
-		result = result * 10.0f + (float)(*(*s)++ - '0');
-	if (**s == '.')
-	{
-		(*s)++;
-		frac = 0.1f;
-		while (ft_isdigit(**s))
-		{
-			result += (float)(*(*s)++ - '0') * frac;
-			frac *= 0.1f;
-		}
-	}
-	*out = (float)sign * result;
-	return (1);
-}
-
-/* read "x,y,z" from s */
-static int read_vec3(const char *s, t_vec3 *out)
-{
-	float x;
-	float y;
-	float z;
-
-	if (!read_float(&s, &x) || *s != ',')
-		return (0);
-	s++;
-	if (!read_float(&s, &y) || *s != ',')
-		return (0);
-	s++;
-	if (!read_float(&s, &z))
-		return (0);
-	out->x = x;
-	out->y = y;
-	out->z = z;
-	return (1);
-}
-
-/* read "r,g,b" ints 0-255, store as [0,1] vec3 */
-static int read_rgb(const char *s, t_vec3 *out)
-{
-	float r;
-	float g;
-	float b;
-
-	if (!read_float(&s, &r) || *s != ',')
-		return (0);
-	s++;
-	if (!read_float(&s, &g) || *s != ',')
-		return (0);
-	s++;
-	if (!read_float(&s, &b))
-		return (0);
-	if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
-		return (0);
-	out->x = r / 255.0f;
-	out->y = g / 255.0f;
-	out->z = b / 255.0f;
-	return (1);
-}
 
 /* ── token converter ─────────────────────────────────────────────────────── */
 
@@ -260,12 +178,14 @@ static bool push_object(t_scene *scene, t_object obj)
 {
 	t_object *tmp;
 
-	tmp = realloc(scene->objects,
-				  (scene->number_of_obj + 2) * sizeof(t_object));
+	tmp = malloc((scene->number_of_obj + 1) * sizeof(t_object));
 	if (!tmp)
 		return (false);
+	ft_memcpy(tmp, scene->objects, scene->number_of_obj * sizeof(t_object));
+	free(scene->objects);
 	scene->objects = tmp;
-	scene->objects[scene->number_of_obj++] = obj;
+	scene->objects[scene->number_of_obj] = obj;
+	scene->number_of_obj++;
 	return (true);
 }
 
@@ -280,7 +200,7 @@ static bool parse_line(char *line, t_scene *scene)
 
 	while (*line == ' ' || *line == '\t')
 		line++;
-	if (*line == '\0' || *line == '#')
+	if (*line == '\0' || *line == '#') // ignores comments
 		return (true);
 
 	/* split on spaces; tokens[0] = identifier, tokens[1..] = fields */
@@ -323,14 +243,12 @@ static bool parse_line(char *line, t_scene *scene)
 			return (free_tokens(tokens), false);
 	}
 	else
-		ft_printf("parse warning: unknown identifier '%s'\n", tokens[0]);
+		return (ft_printf("unknown identifier '%s'\n", tokens[0]), false);
 	free_tokens(tokens);
 	return (true);
 }
 
 /* ── public entry point ──────────────────────────────────────────────────── */
-
-char *get_next_line_strip_nl(int fd);
 
 int parse_scene_file(t_scene *scene, const char *filename)
 {
@@ -348,7 +266,7 @@ int parse_scene_file(t_scene *scene, const char *filename)
 	{
 		if (!parse_line(line, scene))
 		{
-			ft_printf("failed to parse line: %s\n", line);
+			printf("failed to parse line: %s\n", line);
 			free(line);
 			close(fd);
 			return (-1);

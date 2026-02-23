@@ -63,4 +63,6 @@ void	ft_putnbr_fd(int n, int fd);
 // EXTRAS
 int		ft_printf(const char *str, ...);
 
+int		ft_is_in_set(char *s, char c);
+
 #endif
