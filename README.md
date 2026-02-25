@@ -1,3 +1,5 @@
+valgrind --leak-check=full ./miniRT
+
 # explanation camera movement
 	else if (keycode == g_KEY_ARROW_UP)
     {
