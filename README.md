@@ -4,7 +4,7 @@
         delta = vec3_scale(cam->up, g_MOV_STRENGTH);
         cam->pos = vec3_add(cam->pos, delta);
     }
-when we press up, we use cam->up's orientation vector. Not just camera.pos.y += g_MOV_STRENGTH!
+when we press up, we use cam->up's orientation vector to move the camera's y position. Not just camera.pos.y += g_MOV_STRENGTH!
 
 # Intersection sphere explanation:
 

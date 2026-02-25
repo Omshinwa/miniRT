@@ -50,6 +50,7 @@ SOURCES = ft_atoi.c \
           ft_toupper.c \
           ft_printf.c \
           ft_printf_utils.c \
+          ft_is_in_set.c \
 
 BONUS_SRCS = ft_lstadd_front_bonus.c \
             ft_lstnew_bonus.c \

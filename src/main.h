@@ -9,7 +9,8 @@
 
 #include <stdlib.h>
 #include <unistd.h>
-// #include <sys/types.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
 
 #include "../libft/libft.h"
 #include "../minilibx-linux/mlx.h"
