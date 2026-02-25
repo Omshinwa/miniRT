@@ -11,6 +11,11 @@ static const t_instruction g_camera_instruction = {
 	 {NULL, T_INVALID, false, 0}},
 };
 
+static const t_field g_object_field[] = {
+	{"color", T_RGB, true, offsetof(t_object, color)},
+	{NULL, T_INVALID, false, 0},
+};
+
 static const t_instruction g_sphere_instruction = {
 	"sp",
 	offsetof(t_scene, objects),
@@ -19,15 +24,25 @@ static const t_instruction g_sphere_instruction = {
 	 {NULL, T_INVALID, false, 0}},
 };
 
-// parse_fields(tokens, instruction.fields, &obj.data.sphere)
-
-static const t_instruction g_object_instruction = {
-	NULL,
-	0,
+static const t_instruction g_plane_instruction = {
+	"pl",
+	offsetof(t_scene, objects),
 	{
-		{"color", T_RGB, true, offsetof(t_object, color)},
-	},
-};
+		{"point", T_VEC, true, offsetof(t_plane, pos)},
+		{"normal", T_UNIT, true, offsetof(t_plane, normal)},
+		{NULL, T_INVALID, false, 0},
+	}};
+
+static const t_instruction g_cylinder_instruction = {
+	"cy",
+	offsetof(t_scene, objects),
+	{
+		{"pos", T_VEC, true, offsetof(t_cylinder, pos)},
+		{"axis", T_UNIT, true, offsetof(t_cylinder, axis)},
+		{"diameter", T_DIAMETER, true, offsetof(t_cylinder, radius)},
+		{"height", T_FLOAT, true, offsetof(t_cylinder, height)},
+		{NULL, T_INVALID, false, 0},
+	}};
 
 static const t_instruction g_light_instruction = {
 	"L",
@@ -45,19 +60,6 @@ static const t_instruction g_ambient_instruction = {
 	 {"color", T_RGB, false, offsetof(t_light, color)},
 	 {NULL, T_INVALID, false, 0}},
 };
-
-// static const t_field g_plane_field[] = {
-// 	{"p", T_ID, true, 0},
-// 	{"point", T_VEC, true, offsetof(t_plane, pos)},
-// 	{"normal", T_UNIT, true, offsetof(t_plane, normal)},
-// 	{NULL, T_INVALID, false, 0}};
-
-// static const t_field g_cylinder_field[] = {
-// 	{"pos", T_VEC, true, offsetof(t_cylinder, pos)},
-// 	{"axis", T_UNIT, true, offsetof(t_cylinder, axis)},
-// 	{"diameter", T_DIAMETER, true, offsetof(t_cylinder, radius)},
-// 	{"height", T_FLOAT, true, offsetof(t_cylinder, height)},
-// 	{NULL, T_INVALID, false, 0}};
 
 static bool push_object(t_scene *scene, t_object obj)
 {
@@ -91,7 +93,7 @@ static bool do_object_instruction(char **tokens, t_scene *scene, t_instruction i
 	if (color_idx < 0 || !tokens[color_idx])
 		return (false);
 
-	color_idx = parse_fields(color_idx, tokens, g_object_instruction.fields, &obj);
+	color_idx = parse_fields(color_idx, tokens, g_object_field, &obj);
 
 	if (color_idx < 0 || !push_object(scene, obj))
 		return (false);
@@ -122,7 +124,7 @@ static bool do_non_object_instruction(char **tokens, t_scene *scene, t_instructi
 {
 	int res;
 
-	res = parse_fields(1, tokens, instruction.fields, scene + instruction.scene_target);
+	res = parse_fields(1, tokens, instruction.fields, (char *)scene + instruction.scene_target);
 	if (res < 0)
 		return (false);
 	// if it was a camera, do an additional instruction
@@ -161,25 +163,29 @@ bool parse_line(char *line, t_scene *scene)
 	if (!tokens || !tokens[0])
 		return (free_tokens(tokens), false);
 
-	t_instruction instructions[] = {g_camera_instruction, g_sphere_instruction, g_ambient_instruction, g_light_instruction};
-	int len = 4;
-
-	int i = 0;
-	while (i < len)
+	t_instruction lights[] = {g_camera_instruction, g_ambient_instruction, g_light_instruction};
+	t_instruction objects[] = {g_sphere_instruction, g_plane_instruction, g_cylinder_instruction};
+	size_t i;
+	i = 0;
+	// place lights and cam
+	while (i < sizeof(lights) / sizeof(t_instruction))
 	{
-		if (ft_strncmp(tokens[0], instructions[i].id, -1) == 0)
+		if (ft_strncmp(tokens[0], lights[i].id, -1) == 0)
 		{
-			if (instructions[i].scene_target == offsetof(t_scene, objects))
-			{
-				/* DO OBJECT STUFF */
-				if (!do_object_instruction(tokens, scene, instructions[i]))
-					return (free_tokens(tokens), false);
-			}
-			else // gotta be a non object
-			{
-				if (!do_non_object_instruction(tokens, scene, instructions[i]))
-					return (free_tokens(tokens), false);
-			}
+			if (!do_non_object_instruction(tokens, scene, lights[i]))
+				return (free_tokens(tokens), false);
+			return (true);
+		}
+		i++;
+	}
+	i = 0;
+	// add objects
+	while (i < sizeof(objects) / sizeof(t_instruction))
+	{
+		if (ft_strncmp(tokens[0], objects[i].id, -1) == 0)
+		{
+			if (!do_object_instruction(tokens, scene, objects[i]))
+				return (free_tokens(tokens), false);
 			return (true);
 		}
 		i++;

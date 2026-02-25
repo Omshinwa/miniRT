@@ -31,7 +31,7 @@ typedef struct s_instruction
 {
 	const char *id;
 	const size_t scene_target;
-	const t_field fields[4];
+	const t_field fields[5];
 } t_instruction;
 
 bool parse_line(char *line, t_scene *scene);

@@ -2,35 +2,15 @@
 #include "../app/app.h"
 #include "parse_private.h"
 
-// Your program must take as its first argument a scene description file with the .rt
-// extension.
-// ◦ Each type of element can be separated by one or more line breaks.
-// ◦ Each type of information from an element can be separated by one or more
-// spaces.
-// ◦ Each type of element can be set in any order in the file.
-// ◦ Elements defined by a capital letter can only be declared once in the scene.
-// ◦ The first piece of information for each element is the type identifier (composed
-// of one or two characters), followed by all specific information for each object
-// in a strict order such as:
-
 // Z is forward
 // X is right
 // Y is up
-
+//
 // sphere
 //   ^
 //   |
 //   z
 // CAMERA x ---->
-
-/* ========================================================================== */
-/* parse_2.c  –  table-driven scene file parser                               */
-/*                                                                             */
-/* HOW IT WORKS                                                                */
-/* Each line is split into space-separated tokens with ft_split.              */
-/* A key table per identifier maps token index → (type, dst offset).         */
-/* A read_float() cursor-reader replaces strtof/strtol/sscanf/strtok_r.      */
-/* ========================================================================== */
 
 #include "../main.h"
 #include "parse_private.h"
