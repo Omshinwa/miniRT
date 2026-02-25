@@ -13,5 +13,8 @@
 * display infos in the window
 
 # others
-* parse files
 * use david's libft?
+
+# parse
+errors should print to stderr
+check for uniqueness of 'C', 'A' etc

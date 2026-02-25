@@ -1,6 +1,6 @@
 #include "../main.h"
 #include "../app/app.h"
-#include "parse.h"
+#include "parse_private.h"
 
 // Your program must take as its first argument a scene description file with the .rt
 // extension.
@@ -22,6 +22,50 @@
 //   |
 //   z
 // CAMERA x ---->
+
+/* ========================================================================== */
+/* parse_2.c  –  table-driven scene file parser                               */
+/*                                                                             */
+/* HOW IT WORKS                                                                */
+/* Each line is split into space-separated tokens with ft_split.              */
+/* A key table per identifier maps token index → (type, dst offset).         */
+/* A read_float() cursor-reader replaces strtof/strtol/sscanf/strtok_r.      */
+/* ========================================================================== */
+
+#include "../main.h"
+#include "parse_private.h"
+#include <fcntl.h>
+#include <stdio.h> /* perror */
+
+static int parse_scene_file(t_scene *scene, const char *filename)
+{
+	int fd;
+	char *line;
+
+	fd = open(filename, O_RDONLY);
+	if (fd == -1)
+	{
+		perror(filename);
+		return (-1);
+	}
+	line = get_next_line_strip_nl(fd);
+	while (line)
+	{
+		if (!parse_line(line, scene))
+		{
+			printf("failed to parse line: %s\n", line);
+			free(line);
+			close(fd);
+			return (-1);
+		}
+		free(line);
+		line = get_next_line_strip_nl(fd);
+	}
+	close(fd);
+	return (0);
+}
+
+/* ── public entry point ──────────────────────────────────────────────────── */
 
 int setup_scene(t_app *app, char *filename)
 {

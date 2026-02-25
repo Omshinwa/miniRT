@@ -140,6 +140,6 @@ int calc_pixel_color(t_scene *scene, int x, int y)
 		color = color_mult(color, obj->color);
 	}
 	// if ambient light
-	color = vec3_add(color, scene->ambient_light);
+	color = vec3_add(color, vec3_scale(scene->ambient_light.color, scene->ambient_light.brightness));
 	return to_color_int(color);
 }

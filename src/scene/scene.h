@@ -71,9 +71,9 @@ typedef struct s_scene
 	t_object *objects;
 	int number_of_obj;
 	// liste des lumieres
-
+	t_light light;
 	// lumiere ambiente
-	t_vec3 ambient_light;
+	t_light ambient_light;
 
 } t_scene;
 

@@ -3,10 +3,10 @@ NAME = miniRT
 SRC =	main.c \
 		app/app.c \
 		app/hooks.c \
-		parse/parse.c \
-		parse/parse_2.c \
-		parse/parse_utils.c \
 		parse/get_next_line.c \
+		parse/parse_instruction.c \
+		parse/parse_token.c \
+		parse/parse.c \
 		math/math.c \
 		render/raytrace.c \
 		render/render.c \
