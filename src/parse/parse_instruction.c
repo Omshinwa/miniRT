@@ -174,7 +174,7 @@ bool parse_line(char *line, t_scene *scene)
 		{
 			if (!do_non_object_instruction(tokens, scene, lights[i]))
 				return (free_tokens(tokens), false);
-			return (true);
+			return (free_tokens(tokens), true);
 		}
 		i++;
 	}
@@ -186,7 +186,7 @@ bool parse_line(char *line, t_scene *scene)
 		{
 			if (!do_object_instruction(tokens, scene, objects[i]))
 				return (free_tokens(tokens), false);
-			return (true);
+			return (free_tokens(tokens), true);
 		}
 		i++;
 	}
