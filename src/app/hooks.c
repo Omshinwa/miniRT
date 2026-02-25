@@ -54,6 +54,9 @@ static void print_cam(t_camera cam)
 {
 	printf("pos: %3i %3i %3i ", (int)cam.pos.x, (int)cam.pos.y, (int)cam.pos.z);
 	printf("fov: %i \n", cam.fov);
+	printf("up: %2f, %2f, %2f \n", cam.up.x, cam.up.y, cam.up.z);
+	printf("forwd: %2f, %2f, %2f \n", cam.forward.x, cam.forward.y, cam.forward.z);
+	printf("right: %2f, %2f, %2f \n", cam.right.x, cam.right.y, cam.right.z);
 }
 
 static int on_mouse_input(int keycode, int mouse_x, int mouse_y, t_app *app)
@@ -65,15 +68,15 @@ static int on_mouse_input(int keycode, int mouse_x, int mouse_y, t_app *app)
 	t_vec3 delta;
 
 	if (keycode == g_MOUSE_WHEEL_UP)
-    {
-        delta = vec3_scale(cam->forward, g_MOV_STRENGTH);
-        cam->pos = vec3_add(cam->pos, delta);
-    }
+	{
+		delta = vec3_scale(cam->forward, g_MOV_STRENGTH);
+		cam->pos = vec3_add(cam->pos, delta);
+	}
 	else if (keycode == g_MOUSE_WHEEL_DN)
-    {
-        delta = vec3_scale(cam->forward, g_MOV_STRENGTH);
-        cam->pos = vec3_minus(cam->pos, delta);
-    }
+	{
+		delta = vec3_scale(cam->forward, g_MOV_STRENGTH);
+		cam->pos = vec3_minus(cam->pos, delta);
+	}
 	// else if (keycode == g_MOUSE_LEFT)
 	// 	print info on the object being clicked on
 	else
@@ -111,15 +114,15 @@ static int on_key_input(int keycode, t_app *app)
 
 	// Change cam position
 	else if (keycode == g_KEY_ARROW_UP)
-    {
-        delta = vec3_scale(cam->up, g_MOV_STRENGTH);
-        cam->pos = vec3_add(cam->pos, delta);
-    }
+	{
+		delta = vec3_scale(cam->up, g_MOV_STRENGTH);
+		cam->pos = vec3_add(cam->pos, delta);
+	}
 	else if (keycode == g_KEY_ARROW_DOWN)
-    {
-        delta = vec3_scale(cam->up, g_MOV_STRENGTH);
-        cam->pos = vec3_minus(cam->pos, delta);
-    }
+	{
+		delta = vec3_scale(cam->up, g_MOV_STRENGTH);
+		cam->pos = vec3_minus(cam->pos, delta);
+	}
 	else if (keycode == g_KEY_ARROW_LEFT)
 	{
 		delta = vec3_scale(cam->right, g_MOV_STRENGTH * WINDOW_RATIO);
