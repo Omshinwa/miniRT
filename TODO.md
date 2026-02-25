@@ -18,3 +18,4 @@
 # parse
 errors should print to stderr
 check for uniqueness of 'C', 'A' etc
+brightness should be between 0 and 1

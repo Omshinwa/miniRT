@@ -9,7 +9,7 @@
  * read_float: parse one float from *s, advance *s past the digits.
  * Returns 1 on success, 0 on failure.
  */
-static int read_float(const char **s, float *out)
+static bool read_float(const char **s, float *out)
 {
 	float result;
 	float frac;
@@ -24,8 +24,6 @@ static int read_float(const char **s, float *out)
 	}
 	else if (**s == '+')
 		(*s)++;
-	if (!ft_isdigit(**s) && **s != '.')
-		return (0);
 	while (ft_isdigit(**s))
 		result = result * 10.0f + (float)(*(*s)++ - '0');
 	if (**s == '.')
@@ -38,52 +36,54 @@ static int read_float(const char **s, float *out)
 			frac *= 0.1f;
 		}
 	}
+	if (**s && **s != ' ' && **s != ',') // are we ending on an illegal char?
+		return (false);
 	*out = (float)sign * result;
-	return (1);
+	return (true);
 }
 
 /* read "x,y,z" from s */
-static int read_vec3(const char *s, t_vec3 *out)
+static bool read_vec3(const char *s, t_vec3 *out)
 {
 	float x;
 	float y;
 	float z;
 
 	if (!read_float(&s, &x) || *s != ',')
-		return (0);
+		return (false);
 	s++;
 	if (!read_float(&s, &y) || *s != ',')
-		return (0);
+		return (false);
 	s++;
 	if (!read_float(&s, &z))
-		return (0);
+		return (false);
 	out->x = x;
 	out->y = y;
 	out->z = z;
-	return (1);
+	return (true);
 }
 
 /* read "r,g,b" ints 0-255, store as [0,1] vec3 */
-static int read_rgb(const char *s, t_vec3 *out)
+static bool read_rgb(const char *s, t_vec3 *out)
 {
 	float r;
 	float g;
 	float b;
 
 	if (!read_float(&s, &r) || *s != ',')
-		return (0);
+		return (false);
 	s++;
 	if (!read_float(&s, &g) || *s != ',')
-		return (0);
+		return (false);
 	s++;
 	if (!read_float(&s, &b))
-		return (0);
+		return (false);
 	if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
 		return (0);
 	out->x = r / 255.0f;
 	out->y = g / 255.0f;
 	out->z = b / 255.0f;
-	return (1);
+	return (true);
 }
 
 /* ── token converter ─────────────────────────────────────────────────────── */
