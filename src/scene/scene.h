@@ -15,7 +15,7 @@ typedef enum e_obj_type
 typedef struct s_sphere
 {
 	t_vec3 pos;
-	float r;
+	float radius;
 } t_sphere;
 
 typedef struct s_plane

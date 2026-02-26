@@ -20,7 +20,7 @@ static const t_instruction g_sphere_instruction = {
 	"sp",
 	offsetof(t_scene, objects),
 	{{"pos", T_VEC, true, offsetof(t_sphere, pos)},
-	 {"diameter", T_DIAMETER, true, offsetof(t_sphere, r)},
+	 {"diameter", T_DIAMETER, true, offsetof(t_sphere, radius)},
 	 {NULL, T_INVALID, false, 0}},
 };
 
@@ -88,28 +88,29 @@ static bool do_object_instruction(char **tokens, t_scene *scene, t_instruction i
 	{
 		obj = (t_object){OBJ_SPHERE, {0}, {0}};
 		color_idx = parse_fields(1, tokens, instruction.fields, &obj.data.sphere);
+
+		// do some post sphere processing here
 	}
 
 	if (color_idx < 0 || !tokens[color_idx])
 		return (false);
-
-	color_idx = parse_fields(color_idx, tokens, g_object_field, &obj);
-
-	if (color_idx < 0 || !push_object(scene, obj))
+	// color_idx is now the index of the color token, we give it to g_object_field
+	// for parsing
+	if (parse_fields(color_idx, tokens, g_object_field, &obj) < 0 || !push_object(scene, obj))
 		return (false);
 	return (true);
 }
 
 // Because we are only given the forward vector, we derive the up and right from
 // it.
-static int camera_derive_basis(t_camera *cam)
+static bool camera_derive_basis(t_camera *cam)
 {
 	t_vec3 world_up;
 
 	if (vec3_length(cam->forward) < 0.99 || (vec3_length(cam->forward) > 1.01))
 	{
-		printf("Cameria orientation vector isn't normalized.\n");
-		return (1);
+		printf("Camera orientation vector isn't normalized.\n");
+		return (false);
 	}
 	world_up = (t_vec3){0, 1, 0};
 	/* if forward is almost parallel to world_up, use a different reference */
@@ -117,7 +118,7 @@ static int camera_derive_basis(t_camera *cam)
 		world_up = (t_vec3){0, 0, 1};
 	cam->right = vec3_normalize(vec3_cross(world_up, cam->forward));
 	cam->up = vec3_normalize(vec3_cross(cam->forward, cam->right));
-	return (0);
+	return (true);
 }
 
 static bool do_non_object_instruction(char **tokens, t_scene *scene, t_instruction instruction)
@@ -130,7 +131,7 @@ static bool do_non_object_instruction(char **tokens, t_scene *scene, t_instructi
 	// if it was a camera, do an additional instruction
 	if (instruction.id == g_camera_instruction.id)
 	{
-		if (camera_derive_basis(&scene->global_cam))
+		if (!camera_derive_basis(&scene->global_cam))
 			return (false);
 	}
 	return (true);

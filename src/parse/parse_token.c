@@ -100,6 +100,8 @@ static bool convert_token(const char *tok, t_token_type type, void *dest)
 	{
 		if (!read_vec3(tok, &v))
 			return (false);
+		if (type == T_UNIT && (vec3_length(v) > 1.01 || vec3_length(v) < 0.99))
+			return (printf("Not normalized vector. \n"), false);
 		ft_memcpy(dest, &v, sizeof(t_vec3));
 	}
 	else if (type == T_FLOAT || type == T_DIAMETER)

@@ -10,10 +10,12 @@
 * display infos in the window
 * pressing keys and holding move the cam (so we dont have to mash the same key)
 
-# others
-* use david's libft?
-
 # parse
 errors should print to stderr
 check for uniqueness of 'C', 'A' etc
 brightness should be between 0 and 1 (it doesnt verify it for now)
+check for normalized vector
+check for illegal norm (are globals names correctly, defines in the correct place etc)
+
+# errors
+the attribute name .radius is errorous, it's actually the diameter
