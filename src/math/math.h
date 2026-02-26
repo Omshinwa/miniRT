@@ -1,7 +1,15 @@
 #ifndef MATH_H
 #define MATH_H
 
+#include <float.h> // for FLT_MAX
 #include <math.h>
+
+// MATHS
+
+float min_pos_f(float a, float b);
+float quadratic_roots(float a, float b, float c);
+
+// VECTORS
 
 typedef struct s_vec3
 {

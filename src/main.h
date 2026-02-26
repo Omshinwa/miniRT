@@ -12,6 +12,8 @@
 #include <stdbool.h>
 #include <stdio.h> // printf
 
+#include <assert.h> // remove for build
+
 #include "../libft/libft.h"
 #include "../minilibx-linux/mlx.h"
 

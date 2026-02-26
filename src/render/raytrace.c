@@ -1,9 +1,9 @@
 #include "../main.h"
 #include "render.h"
 
-// Given a camera and a pixel position, returns D
-// D is the normalized directional vector from the camera to the pixel at z=1
-t_vec3 get_direction_vector(t_camera camera, int pixel_x, int pixel_y)
+// Given a camera and a pixel position:
+// returns the normalized directional vector from the camera to the pixel at z=1
+t_vec3 camera_pixel_to_vector(t_camera camera, int pixel_x, int pixel_y)
 {
 	// Build ray for pixel (x,y) in camera space using FOV
 	// + 0.5f mean it's the center of the pixel
@@ -57,65 +57,26 @@ t_vec3 get_direction_vector(t_camera camera, int pixel_x, int pixel_y)
 	return (vec3_normalize(D));
 }
 
-// Returns the nearest collision point t, or -1 if None
-static float intersect_sphere(t_vec3 origin, t_vec3 D, t_sphere sphere)
-{
-	// L est le vecteur du centre de la sphere a la camera
-	// L = O - C
-	t_vec3 L = vec3_minus(origin, sphere.pos);
-	float a = dot_product(D, D);
-	float b = 2.0f * dot_product(D, L);
-	float c = dot_product(L, L) - sphere.radius * sphere.radius;
-	float disc = b * b - 4.0f * a * c;
-	// If Δ<0: no intersection
-	// If Δ=0: one intersection (tangent)
-	// If Δ>0: two intersections
-	if (disc < 0.0f)
-		return -1.0f;
-	float sqrt_d = sqrtf(disc);
-	float t0 = (-b - sqrt_d) / (2.0f * a);
-	float t1 = (-b + sqrt_d) / (2.0f * a);
-	/* choose nearest positive t */
-	float t = -1.0f;
-	if (t0 > 0.0f)
-		t = t0;
-	if (t1 > 0.0f && (t < 0.0f || t1 < t))
-		t = t1;
-	return t;
-}
-
-static float intersect_cylinder(t_vec3 origin, t_vec3 D, t_cylinder cylinder)
-{
-	// commencons par creer un nouveau repere orthonorme avec le cylindre position (0,0,0)
-	// avec l'axe du cylindre comme 3e vecteur de la base orthonormee
-	t_vec3 old_base = (t_vec3){1, 1, 1};
-	t_vec3 new_base_x;
-	t_vec3 new_base_y = (t_vec3){1, 1, 1};
-	t_vec3 new_base_z;
-	(void)origin;
-	(void)D;
-	(void)cylinder;
-	new_base_z = vec3_normalize(cylinder.axis);
-	new_base_x = vec3_add(new_base_y, old_base);
-	return (0.1);
-}
-
 // Given a single object and a vector+origin
 // Return the INTERSECTION point (-1 if none)
-static float get_intersection(t_vec3 origin, t_vec3 vector, t_object obj)
+static float get_hit_object(t_vec3 origin, t_vec3 vector, t_object obj)
 {
 	float intersection;
 
 	intersection = -1.0f;
 	if (obj.type == OBJ_SPHERE)
-		intersection = intersect_sphere(origin, vector, obj.data.sphere);
+		intersection = get_hit_sphere(origin, vector, obj.data.sphere);
 	else if (obj.type == OBJ_CYLINDER)
-		intersection = intersect_cylinder(origin, vector, obj.data.cylinder);
+		intersection = get_hit_cylinder(origin, vector, obj.data.cylinder);
+	else if (obj.type == OBJ_PLANE)
+		intersection = get_hit_plane(origin, vector, obj.data.plane.pos, obj.data.plane.normal);
+	else
+		assert(0);
 	// if PLANE, elif CYLINDER
 	return (intersection);
 }
 
-// given a vector+origin, and the environment,
+// given a ray (VECTOR + ORIGIN), and the environment (SCENE),
 // goes through the list of objects and return:
 // OBJ_HIT: the closest object hit (NULL if none)
 // DISTANCE: the distance it hit at (through output parameter)
@@ -123,12 +84,14 @@ static t_object *get_hit(t_scene *scene, t_vec3 origin, t_vec3 d_vector, float *
 {
 	t_object *obj_hit;
 	float current_dist;
+	int i = -1;
 
 	obj_hit = NULL;
 	*closest_dist = MAX_DRAW_DISTANCE;
-	for (int i = 0; i < scene->number_of_obj; ++i)
+
+	while (++i < scene->number_of_obj)
 	{
-		current_dist = get_intersection(origin, d_vector, scene->objects[i]);
+		current_dist = get_hit_object(origin, d_vector, scene->objects[i]);
 		if (current_dist > 0.0f && current_dist < *closest_dist)
 		{
 			*closest_dist = current_dist;
@@ -146,7 +109,7 @@ int calc_pixel_color(t_scene *scene, int x, int y)
 	t_object *obj;
 	float dist;
 
-	d_vector = get_direction_vector(scene->global_cam, x, y);
+	d_vector = camera_pixel_to_vector(scene->global_cam, x, y);
 	obj = get_hit(scene, scene->global_cam.pos, d_vector, &dist);
 	color = (t_vec3){0, 0, 0};
 

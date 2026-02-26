@@ -8,8 +8,11 @@ SRC =	main.c \
 		parse/parse_token.c \
 		parse/parse.c \
 		math/math.c \
+		render/cylinder.c \
+		render/plane.c \
 		render/raytrace.c \
 		render/render.c \
+		render/sphere.c \
 		scene/camera.c
 # SRC = *.c
 OBJ = $(SRC:.c=.o)

@@ -1,3 +1,12 @@
+# dot product geometrical interpretation
+How much are two vectors pointing in the same direction?
+f θ < 90° → cos(θ) > 0 → dot > 0
+→ vectors generally point same direction
+If θ = 90° → cos(θ) = 0 → dot = 0
+→ vectors are perpendicular
+If θ > 90° → cos(θ) < 0 → dot < 0
+→ vectors point opposite directions
+
 valgrind --leak-check=full ./miniRT
 
 # explanation camera movement
@@ -33,12 +42,12 @@ By substituting the ray equation into the sphere equation:
 
 Let `L = 0 - C` (vector from sphere center to ray origin), we have:
 
-`|L + D*t|² = r²`
+`|D*t + L|² = r²`
 Expand the squared length (dot product with itself)
-`|D|²t² + 2(D.L)t + |L|² - r² = 0`
+`|D|²*t² + 2(D.L)*t + |L|² - r² = 0`
 
 This is a quadratic equation in `t` with the form
-`at² + bt + c = 0`, where
+`a*t² + b*t + c = 0`, where
 
 `a= D.D`, `b= 2(D.L)`, `c= L.L - r²`
 
