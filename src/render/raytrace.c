@@ -65,7 +65,7 @@ static float intersect_sphere(t_vec3 origin, t_vec3 D, t_sphere sphere)
 	t_vec3 L = vec3_minus(origin, sphere.pos);
 	float a = dot_product(D, D);
 	float b = 2.0f * dot_product(D, L);
-	float c = dot_product(L, L) - sphere.r * sphere.r;
+	float c = dot_product(L, L) - sphere.radius * sphere.radius;
 	float disc = b * b - 4.0f * a * c;
 	// If Δ<0: no intersection
 	// If Δ=0: one intersection (tangent)
@@ -84,6 +84,22 @@ static float intersect_sphere(t_vec3 origin, t_vec3 D, t_sphere sphere)
 	return t;
 }
 
+static float intersect_cylinder(t_vec3 origin, t_vec3 D, t_cylinder cylinder)
+{
+	// commencons par creer un nouveau repere orthonorme avec le cylindre position (0,0,0)
+	// avec l'axe du cylindre comme 3e vecteur de la base orthonormee
+	t_vec3 old_base = (t_vec3){1, 1, 1};
+	t_vec3 new_base_x;
+	t_vec3 new_base_y = (t_vec3){1, 1, 1};
+	t_vec3 new_base_z;
+	(void)origin;
+	(void)D;
+	(void)cylinder;
+	new_base_z = vec3_normalize(cylinder.axis);
+	new_base_x = vec3_add(new_base_y, old_base);
+	return (0.1);
+}
+
 // Given a single object and a vector+origin
 // Return the INTERSECTION point (-1 if none)
 static float get_intersection(t_vec3 origin, t_vec3 vector, t_object obj)
@@ -93,6 +109,8 @@ static float get_intersection(t_vec3 origin, t_vec3 vector, t_object obj)
 	intersection = -1.0f;
 	if (obj.type == OBJ_SPHERE)
 		intersection = intersect_sphere(origin, vector, obj.data.sphere);
+	else if (obj.type == OBJ_CYLINDER)
+		intersection = intersect_cylinder(origin, vector, obj.data.cylinder);
 	// if PLANE, elif CYLINDER
 	return (intersection);
 }

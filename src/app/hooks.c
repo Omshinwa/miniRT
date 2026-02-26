@@ -104,9 +104,9 @@ static int on_key_input(int keycode, t_app *app)
 	t_vec3 delta;
 	// Change cam orientation
 	if (keycode == g_KEY_W)
-		camera_pitch(cam, g_ROT_STRENGTH);
-	else if (keycode == g_KEY_S)
 		camera_pitch(cam, -g_ROT_STRENGTH);
+	else if (keycode == g_KEY_S)
+		camera_pitch(cam, g_ROT_STRENGTH);
 	else if (keycode == g_KEY_A)
 		camera_yaw(cam, -g_ROT_STRENGTH);
 	else if (keycode == g_KEY_D)
