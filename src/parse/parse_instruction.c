@@ -72,6 +72,7 @@ static bool push_object(t_scene *scene, t_object obj)
 	free(scene->objects);
 	scene->objects = tmp;
 	scene->objects[scene->number_of_obj] = obj;
+	// this copies the latest obj to the last element of the array
 	scene->number_of_obj++;
 	return (true);
 }
@@ -90,6 +91,25 @@ static bool do_object_instruction(char **tokens, t_scene *scene, t_instruction i
 		color_idx = parse_fields(1, tokens, instruction.fields, &obj.data.sphere);
 
 		// do some post sphere processing here
+	}
+	else if (instruction.id == g_cylinder_instruction.id)
+	{
+		obj = (t_object){OBJ_CYLINDER, {0}, {0}};
+		color_idx = parse_fields(1, tokens, instruction.fields, &obj.data.sphere);
+
+		// do some post cylinder processing here
+	}
+	else if (instruction.id == g_plane_instruction.id)
+	{
+		obj = (t_object){OBJ_PLANE, {0}, {0}};
+		color_idx = parse_fields(1, tokens, instruction.fields, &obj.data.plane);
+
+		// do some post cylinder processing here
+	}
+	else
+	{
+		printf("No instruction for `%s` \n", instruction.id);
+		assert(0);
 	}
 
 	if (color_idx < 0 || !tokens[color_idx])
@@ -133,6 +153,11 @@ static bool do_non_object_instruction(char **tokens, t_scene *scene, t_instructi
 	{
 		if (!camera_derive_basis(&scene->global_cam))
 			return (false);
+	}
+	else
+	{
+		printf("No instruction for `%s` \n", instruction.id);
+		assert(0);
 	}
 	return (true);
 }

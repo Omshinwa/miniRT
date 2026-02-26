@@ -1,3 +1,5 @@
+#include "math.h"
+
 //  ██████   ██████   █████████   ███████████ █████   █████
 // ░░██████ ██████   ███░░░░░███ ░█░░░███░░░█░░███   ░░███
 //  ░███░█████░███  ░███    ░███ ░   ░███  ░  ░███    ░███   █████
@@ -7,7 +9,53 @@
 //  █████     █████ █████   █████    █████    █████   █████ ██████
 // ░░░░░     ░░░░░ ░░░░░   ░░░░░    ░░░░░    ░░░░░   ░░░░░ ░░░░░░
 
-#include "math.h"
+// given two floats, return the smallest positive number between a and b
+// return -1 if they're both negative
+float min_pos_f(float a, float b)
+{
+	float min;
+	if (a < 0 && b < 0)
+		return (-1.0f);
+	min = FLT_MAX;
+	if (a > 0.0f)
+		min = a;
+	if (b > 0.0f && b < min)
+		min = b;
+	return (min);
+}
+
+// This solves a quadradratic equation in the form at² + bt + c = 0
+// currently returns only the smallest positive root,
+// -1 if None
+// maybe should return both roots root1 and root2?
+// returns -1, -1 if no solution in R
+float quadratic_roots(float a, float b, float c)
+{
+	float d;
+	float sqrt_d;
+	float t0;
+	float t1;
+	d = b * b - 4.0f * a * c;
+	// If Δ<0: no intersection
+	// If Δ=0: one intersection (tangent)
+	// If Δ>0: two intersections
+	if (d < 0.0f)
+		return -1.0f;
+	sqrt_d = sqrtf(d);
+	t0 = (-b - sqrt_d) / (2.0f * a);
+	t1 = (-b + sqrt_d) / (2.0f * a);
+
+	return min_pos_f(t0, t1);
+}
+
+//  █████   █████ ██████████   █████████  ███████████  ████████
+// ▒▒███   ▒▒███ ▒▒███▒▒▒▒▒█  ███▒▒▒▒▒███▒█▒▒▒███▒▒▒█ ███▒▒▒▒███
+//  ▒███    ▒███  ▒███  █ ▒  ███     ▒▒▒ ▒   ▒███  ▒ ▒▒▒    ▒███
+//  ▒███    ▒███  ▒██████   ▒███             ▒███       ██████▒
+//  ▒▒███   ███   ▒███▒▒█   ▒███             ▒███      ▒▒▒▒▒▒███
+//   ▒▒▒█████▒    ▒███ ▒   █▒▒███     ███    ▒███     ███   ▒███
+//     ▒▒███      ██████████ ▒▒█████████     █████   ▒▒████████
+//      ▒▒▒      ▒▒▒▒▒▒▒▒▒▒   ▒▒▒▒▒▒▒▒▒     ▒▒▒▒▒     ▒▒▒▒▒▒▒▒
 
 // Returns the dot product of two vectors
 float dot_product(t_vec3 a, t_vec3 b) { return (a.x * b.x + a.y * b.y + a.z * b.z); }
@@ -49,7 +97,6 @@ t_vec3 vec3_normalize(t_vec3 v)
 
 int to_color_int(t_vec3 c)
 {
-
 	int red;
 	int green;
 	int blue;
