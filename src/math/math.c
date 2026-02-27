@@ -9,7 +9,7 @@
 //  █████     █████ █████   █████    █████    █████   █████ ██████
 // ░░░░░     ░░░░░ ░░░░░   ░░░░░    ░░░░░    ░░░░░   ░░░░░ ░░░░░░
 
-// given two floats, return the smallest positive number between a and b
+// given two floats, return the smallest positive number between A and B
 // return -1 if they're both negative
 float min_pos_f(float a, float b)
 {
@@ -84,6 +84,14 @@ t_vec3 vec3_normalize(t_vec3 v)
 	if (l == 0.0f)
 		return v;
 	return vec3_scale(v, 1.0f / l);
+}
+
+// given a parameter t, returns P defined as P = O + D*t
+// O is the origin of the ray
+// D the normalized! directional vector
+t_vec3 t_to_P(t_vec3 O, t_vec3 D, float t)
+{
+	return (vec3_add(O, vec3_scale(D, t)));
 }
 
 //    █████████     ███████    █████          ███████    ███████████

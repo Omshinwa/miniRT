@@ -1,14 +1,34 @@
 #include "render.h"
 
-float get_hit_cylinder(t_vec3 origin, t_vec3 D, t_cylinder cylinder)
+// returns a positive number if it hits a disk:
+// O is the origin of the ray, D the normalized directional vector
+// C is the center of the disk
+// R is it's radius
+// N is the normal vector of the disk
+static float get_hit_disk(t_vec3 O, t_vec3 D, t_vec3 C, t_vec3 N, float R)
 {
-	// methode 1
-	// commencons par creer un nouveau repere orthonorme avec le centre du cylindre comme origine
-	// (0,0,0) avec l'axe du cylindre comme 3e vecteur de la base orthonormee
-	// on recalcule le rayon dans cette nouvelle base. et on resout sans se soucier du Z.
+	float t;
 
-	// methode 2
+	t = get_hit_plane(O, D, C, N);
+	if (t < 0)
+		return (t);
+	// next we check if it's inside the radius
+	t_vec3 P;
+	P = t_to_P(O, D, t);
+	t_vec3 CP;
+	CP = vec3_minus(P, C);
+	if (dot_product(CP, CP) <= R * R)
+		return (t + 30); // TODO remove it later, this is just to color the disk differently
+	return (-1.0f);
+}
 
+// 3 Steps
+// 1. calculate if the ray hits an infinite cylinder
+// 2. check if it's inside the limited cylinder
+// 3. check if it hits the caps
+// 4. returns the closest t
+float get_hit_cylinder(t_vec3 O, t_vec3 D, t_cylinder cylinder)
+{
 	// let's calculate D_perp = D - dot(D, A) * A
 	t_vec3 D_perp;
 	t_vec3 D_parallel;
@@ -21,7 +41,7 @@ float get_hit_cylinder(t_vec3 origin, t_vec3 D, t_cylinder cylinder)
 	t_vec3 OC;
 	t_vec3 OC_parallel;
 	t_vec3 OC_perp;
-	OC = vec3_minus(origin, cylinder.pos);
+	OC = vec3_minus(O, cylinder.pos);
 	OC_parallel = vec3_scale(cylinder.axis, dot_product(OC, cylinder.axis));
 	OC_perp = vec3_minus(OC, OC_parallel);
 
@@ -39,7 +59,7 @@ float get_hit_cylinder(t_vec3 origin, t_vec3 D, t_cylinder cylinder)
 	// t is the intersection with the infinite cylinder
 
 	// Let's calculate P, the intersection point.
-	t_vec3 P = vec3_add(origin, vec3_scale(D, t));
+	t_vec3 P = t_to_P(O, D, t);
 	// y is the Cylinder.axis component of P
 	float y = dot_product(vec3_minus(P, cylinder.pos), cylinder.axis);
 
@@ -54,44 +74,16 @@ float get_hit_cylinder(t_vec3 origin, t_vec3 D, t_cylinder cylinder)
 	// point Top center:
 	// Ct = C + A * (h/2)
 	t_vec3 Ct = vec3_add(cylinder.pos, vec3_scale(cylinder.axis, cylinder.height / 2));
-	(void)Cb;
-	(void)Ct;
-	// Intersect ray with plane:
-	// dot(D, A) ≠ 0
-	// (P−Ccap​)⋅A=0
-	// Equation d'un plan defini avec A (vecteur normal) et C (le point centre)
-	// (P - C) . A = 0
-	// Substitute P with P = O + D * t
-	// (O + D * t - C) . A = 0
-	// solve for t: (we check if it's positive, if the plane is in front of the camera)
-	// t = (C - O).A / (D.A)
-	// Important: If D·A ≈ 0, the ray is parallel to the plane, so there is no intersection with this cap.
+
+	float t1 = get_hit_disk(O, D, Cb, cylinder.axis, cylinder.radius);
+	float t2 = get_hit_disk(O, D, Ct, cylinder.axis, cylinder.radius);
+
+	t1 = min_pos_f(t1, t2);
 	// 	Check if the point is inside the disk
-
-	// The plane is infinite; the cap is a disk of radius r.
-
-	// Compute the intersection point:
-
-	// P=O+tD
-	// P=O+tD
-
-	// Check distance to the cap center:
-
-	// ∣P−Ccap∣≤r
-	// ∣P−C
-	// cap
-	// 	​
-
-	// ∣≤r
-
 	// If true → the ray hits the cap
-
 	// If false → it misses the cap
-	// t = dot_product(Ccap)
-	// Solve:
-	// t = dot(Ccap - O, A) / dot(D, A)
 	// Then check if point lies inside radius:
 	// |P - Ccap| ≤ r
 
-	return (t);
+	return (min_pos_f(t, t1));
 }

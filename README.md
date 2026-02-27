@@ -1,4 +1,25 @@
-# dot product geometrical interpretation
+# Useful commands
+
+valgrind --leak-check=full ./miniRT
+
+
+# Camera
+
+## Explanation camera movement
+	else if (keycode == g_KEY_ARROW_UP)
+    {
+        delta = vec3_scale(cam->up, g_MOV_STRENGTH);
+        cam->pos = vec3_add(cam->pos, delta);
+    }
+when we press up, we use cam->up's orientation vector to move the camera's y position. Not just camera.pos.y += g_MOV_STRENGTH!
+
+## Rotation for camera
+
+https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
+
+# MATH
+
+## dot product geometrical interpretation
 How much are two vectors pointing in the same direction?
 f θ < 90° → cos(θ) > 0 → dot > 0
 → vectors generally point same direction
@@ -7,17 +28,9 @@ If θ = 90° → cos(θ) = 0 → dot = 0
 If θ > 90° → cos(θ) < 0 → dot < 0
 → vectors point opposite directions
 
-valgrind --leak-check=full ./miniRT
+# Calculating intersection with objects
 
-# explanation camera movement
-	else if (keycode == g_KEY_ARROW_UP)
-    {
-        delta = vec3_scale(cam->up, g_MOV_STRENGTH);
-        cam->pos = vec3_add(cam->pos, delta);
-    }
-when we press up, we use cam->up's orientation vector to move the camera's y position. Not just camera.pos.y += g_MOV_STRENGTH!
-
-# Intersection sphere explanation:
+## Intersection sphere:
 
 A ray is defined as
 `P(t) = O + D*t`
@@ -57,6 +70,50 @@ If Δ<0: no intersection
 If Δ=0: one intersection (tangent)
 If Δ>0: two intersections
 
-# Rotation for camera
+## Intersection plane:
 
-https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
+Equation d'un plan defini par un point P quelconque sur le plan, avec le vecteur normal N et R un point de reference du plan:
+`(P - R) . N = 0`
+Substitute P with `P = O + D * t`, O is the origin of the ray, D is the directional vector
+`(O + D * t - R) . N = 0`
+solve for t: (we check if it's positive, if the plane is in front of the camera)
+`(O + D * t - R) . N = 0` ==
+`O.N + (D*t).N - R.N = 0` ==
+`(D*t).N = - O.N + R.N` ==
+`t*(D.N) = R.N - O.N` ==
+
+`t = (R - O) . N / (D . N)`
+
+## Intersection cylinder:
+
+1) Find the intersection points between the ray and the infinite cylinder tube.
+2) Check if those points are inside the finite cylinder.
+3) Find the intersection with the two disks that are the top and bottom of the cylinder.
+
+-> returns the lowest positive t between the hits of the disks and the tube.
+
+### 1)
+I would have done it in the geometrical approach, but apparently it's slower. So the current
+implementation is:
+Let's project D onto the cylinder's axis.
+`D = D_perp + D_parallel` with
+* D_parallel = how much the ray moves along the axis
+* D_perp = how much the ray moves around the cylinder
+Let A be the cylinder's axis.
+`D_parallel = D.A * A`
+`D_perp = D - D_parallel`
+
+Finding the intersection point with the tube is equivalent to determining
+`| D_perp * t + OC_perp |² = r²` (check sphere)
+with OC_perp being the perpendicular component of OC along A.
+C is the center of the cylinder.
+
+we get `t`. We check if P(t) is inside the finite cylinder.
+-cylinder.height / 2< y < cylinder.height / 2
+with y being the projection of P onto the axis
+`y = CP . A`
+
+### 3)
+
+First we check the intersection with the ray and the plane that emcompass the disk.
+Then we check if that intersection point is inside the disk (the length from the center to that point is inferior to the radius of the disk).
