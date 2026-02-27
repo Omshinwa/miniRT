@@ -13,6 +13,30 @@
 //  ██████████   █████   █████ █████   █████    ░░███ ░░███
 // ░░░░░░░░░░   ░░░░░   ░░░░░ ░░░░░   ░░░░░      ░░░   ░░░
 
+static t_vec3 int_to_color(int input)
+{
+	t_vec3 color;
+
+	float R = (input >> 16 & 0x0000FF);
+	float G = (input >> 8 & 0x0000FF);
+	float B = (input & 0x0000FF);
+	color = (t_vec3){R / 255.0f, G / 255.0f, B / 255.0f};
+	return (color);
+}
+
+static t_vec3 get_texture_pixel_at(t_mlx_img img, float u, float v)
+{
+	int color;
+	int *buffer;
+	int x;
+	int y;
+	x = floor(u * img.width);
+	y = floor(v * img.height);
+	buffer = (int *)img.first_pixel;
+	color = buffer[(y * img.size_line / (img.bits_per_pixel / 8)) + x];
+	return (int_to_color(color));
+}
+
 // P is a point on the surface of the OBJ
 // we apply the OBJ's color
 // the texture
@@ -23,8 +47,8 @@ t_vec3 compute_obj_material(t_object *obj, t_vec3 P)
 	t_vec3 color;
 	float uv[2];
 
-	// color = (t_vec3){1, 1, 1};
 	color = obj->color;
+
 	if (obj->type == OBJ_SPHERE)
 		sphere_uv(P, obj->data.sphere, &uv[0], &uv[1]);
 	else if (obj->type == OBJ_PLANE)
@@ -33,6 +57,9 @@ t_vec3 compute_obj_material(t_object *obj, t_vec3 P)
 		assert(0);
 
 	// texture
+
+	if (obj->texture.img_ptr)
+		color = get_texture_pixel_at(obj->texture, uv[0], uv[1]);
 
 	// luminosity
 
@@ -53,7 +80,7 @@ static void set_image_pixel_at(t_app *app, int x, int y, int color)
 	int *buffer;
 	int bytes_per_pixel;
 
-	bytes_per_pixel = app->pixel_depth / 8;
+	bytes_per_pixel = app->bits_per_pixel / 8;
 	buffer = (int *)app->first_pixel;
 	buffer[(y * app->size_line / bytes_per_pixel) + x] = color;
 }
@@ -71,7 +98,7 @@ void redraw(t_app *app)
 		y = -1;
 		while (++y < WINDOW_Y)
 		{
-			color = calc_pixel_color(app->scene, x, y);
+			color = calc_pixel_color(app, x, y);
 			set_image_pixel_at(app, x, y, color);
 		}
 	}
@@ -79,15 +106,15 @@ void redraw(t_app *app)
 }
 
 // Given a x,y pixel coordinate, calculate its color
-int calc_pixel_color(t_scene *scene, int x, int y)
+int calc_pixel_color(t_app *app, int x, int y) // scene, not app
 {
 	t_vec3 d_vector;
 	t_vec3 color;
 	t_object *obj;
 	float dist;
 
-	d_vector = camera_pixel_to_vector(scene->global_cam, x, y);
-	obj = get_hit(scene, scene->global_cam.pos, d_vector, &dist);
+	d_vector = camera_pixel_to_vector(app->scene->global_cam, x, y);
+	obj = get_hit(app->scene, app->scene->global_cam.pos, d_vector, &dist);
 	color = (t_vec3){0, 0, 0};
 
 	if (obj) // we hit something
@@ -98,10 +125,10 @@ int calc_pixel_color(t_scene *scene, int x, int y)
 
 		// calc UV and do diverse stuff
 		// // object checkerboard pattern
-		t_vec3 P = t_to_P(scene->global_cam.pos, d_vector, dist);
+		t_vec3 P = t_to_P(app->scene->global_cam.pos, d_vector, dist);
 		color = color_mult(color, compute_obj_material(obj, P));
 	}
 	// if ambient light
-	color = vec3_add(color, vec3_scale(scene->ambient_light.color, scene->ambient_light.brightness));
+	color = vec3_add(color, vec3_scale(app->scene->ambient_light.color, app->scene->ambient_light.brightness));
 	return to_color_int(color);
 }

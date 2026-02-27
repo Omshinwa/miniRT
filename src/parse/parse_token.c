@@ -140,12 +140,14 @@ static bool convert_token(t_app *app, char *tok, t_token_type type, void *dest)
 	else if (type == T_TEXTURE)
 	{
 		t_mlx_img texture;
-		texture.img_ptr = mlx_xpm_file_to_image(app->mlx_ptr, tok, &texture.width, &texture.height);
-		if (texture.img_ptr)
+		// texture.img_ptr = mlx_xpm_file_to_image(app->mlx_ptr, tok, &texture.width, &texture.height);
+		texture.img_ptr = mlx_xpm_file_to_image(app->mlx_ptr, "/home/wiwu/Documents/miniRT/earth.xpm", &texture.width, &texture.height);
+		if (!texture.img_ptr)
 		{
-			printf("Warning, failed to load file `%s` \n", tok);
+			printf("warning, failed to load file `%s` \n", tok);
 			return (false);
 		}
+		texture.first_pixel = mlx_get_data_addr(texture.img_ptr, &texture.bits_per_pixel, &texture.size_line, &texture.endian);
 		ft_memcpy(dest, &texture, sizeof(t_mlx_img));
 	}
 	else
@@ -183,7 +185,8 @@ int parse_fields(t_app *app, int index, char **tokens, const t_field *fields, vo
 				return (-1);
 			}
 		}
-		i++;
+		else
+			i++; // consume the token
 		fields++;
 	}
 	return (i);
