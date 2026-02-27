@@ -28,6 +28,8 @@ t_vec3 vec3_scale(t_vec3 v, float s);
 t_vec3 vec3_minus(t_vec3 a, t_vec3 b);
 float vec3_length(t_vec3 v);
 
+t_vec3 t_to_P(t_vec3 O, t_vec3 D, float t);
+
 int to_color_int(t_vec3 c);
 t_vec3 color_mult(t_vec3 a, t_vec3 b);
 #endif
