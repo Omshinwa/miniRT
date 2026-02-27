@@ -9,7 +9,6 @@
 
 typedef struct s_app
 {
-	// t_minilib minilib;
 	void *mlx_ptr;
 	void *win_ptr;
 	void *img_ptr;
@@ -29,6 +28,6 @@ t_app *create_app(void);
 void hook_everything(t_app *app);
 void redraw(t_app *app);
 
-int setup_scene(t_app *app, char* filename);
+int setup_scene(t_app *app, char *filename);
 
 #endif

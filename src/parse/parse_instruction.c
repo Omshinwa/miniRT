@@ -13,6 +13,8 @@ static const t_instruction g_camera_instruction = {
 
 static const t_field g_object_field[] = {
 	{"color", T_RGB, true, offsetof(t_object, color)},
+	{"checkerboard", T_IS_CHECKERBOARD, false, offsetof(t_object, checker)},
+	{"texture", T_TEXTURE, false, offsetof(t_object, texture)},
 	{NULL, T_INVALID, false, 0},
 };
 
@@ -77,46 +79,32 @@ static bool push_object(t_scene *scene, t_object obj)
 	return (true);
 }
 
-static bool do_object_instruction(char **tokens, t_scene *scene, t_instruction instruction)
+static bool do_object_instruction(char **tokens, t_app *app, t_instruction instruction)
 {
-	int color_idx;
+	int obj_idx;
 	t_object obj;
 
-	obj = (t_object){OBJ_SPHERE, {0}, {0}};
-	color_idx = -1;
+	obj = (t_object){OBJ_SPHERE, {}, {}, false, {}};
+	obj_idx = -1;
 
 	if (instruction.id == g_sphere_instruction.id)
-	{
-		obj = (t_object){OBJ_SPHERE, {0}, {0}};
-		color_idx = parse_fields(1, tokens, instruction.fields, &obj.data.sphere);
-
-		// do some post sphere processing here
-	}
+		obj.type = OBJ_SPHERE;
 	else if (instruction.id == g_cylinder_instruction.id)
-	{
-		obj = (t_object){OBJ_CYLINDER, {0}, {0}};
-		color_idx = parse_fields(1, tokens, instruction.fields, &obj.data.sphere);
-
-		// do some post cylinder processing here
-	}
+		obj.type = OBJ_CYLINDER;
 	else if (instruction.id == g_plane_instruction.id)
-	{
-		obj = (t_object){OBJ_PLANE, {0}, {0}};
-		color_idx = parse_fields(1, tokens, instruction.fields, &obj.data.plane);
-
-		// do some post cylinder processing here
-	}
+		obj.type = OBJ_PLANE;
 	else
 	{
 		printf("No instruction for `%s` \n", instruction.id);
 		assert(0);
 	}
+	obj_idx = parse_fields(app, 1, tokens, instruction.fields, &obj.data);
 
-	if (color_idx < 0 || !tokens[color_idx])
+	if (obj_idx < 0 || !tokens[obj_idx])
 		return (false);
-	// color_idx is now the index of the color token, we give it to g_object_field
-	// for parsing
-	if (parse_fields(color_idx, tokens, g_object_field, &obj) < 0 || !push_object(scene, obj))
+	// everything on the right of obj_idx are the field common to every
+	// object, eg color, is it checkerboard
+	if (parse_fields(app, obj_idx, tokens, g_object_field, &obj) < 0 || !push_object(app->scene, obj))
 		return (false);
 	return (true);
 }
@@ -141,17 +129,17 @@ static bool camera_derive_basis(t_camera *cam)
 	return (true);
 }
 
-static bool do_non_object_instruction(char **tokens, t_scene *scene, t_instruction instruction)
+static bool do_non_object_instruction(char **tokens, t_app *app, t_instruction instruction)
 {
 	int res;
 
-	res = parse_fields(1, tokens, instruction.fields, (char *)scene + instruction.scene_target);
+	res = parse_fields(app, 1, tokens, instruction.fields, (char *)app->scene + instruction.scene_target);
 	if (res < 0)
 		return (false);
 	// if it was a camera, do an additional instruction
 	if (instruction.id == g_camera_instruction.id)
 	{
-		if (!camera_derive_basis(&scene->global_cam))
+		if (!camera_derive_basis(&app->scene->global_cam))
 			return (false);
 	}
 	else
@@ -175,7 +163,7 @@ static void free_tokens(char **tokens)
 	free(tokens);
 }
 
-bool parse_line(char *line, t_scene *scene)
+bool parse_line(char *line, t_app *app)
 {
 	char **tokens;
 
@@ -198,7 +186,7 @@ bool parse_line(char *line, t_scene *scene)
 	{
 		if (ft_strncmp(tokens[0], lights[i].id, -1) == 0)
 		{
-			if (!do_non_object_instruction(tokens, scene, lights[i]))
+			if (!do_non_object_instruction(tokens, app, lights[i]))
 				return (free_tokens(tokens), false);
 			return (free_tokens(tokens), true);
 		}
@@ -210,7 +198,7 @@ bool parse_line(char *line, t_scene *scene)
 	{
 		if (ft_strncmp(tokens[0], objects[i].id, -1) == 0)
 		{
-			if (!do_object_instruction(tokens, scene, objects[i]))
+			if (!do_object_instruction(tokens, app, objects[i]))
 				return (free_tokens(tokens), false);
 			return (free_tokens(tokens), true);
 		}

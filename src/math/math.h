@@ -4,6 +4,8 @@
 #include <float.h> // for FLT_MAX
 #include <math.h>
 
+#define PI 3.14159265358979323846
+
 // MATHS
 
 float min_pos_f(float a, float b);

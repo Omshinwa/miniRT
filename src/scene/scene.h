@@ -2,6 +2,15 @@
 #define scene_H
 
 #include "../math/math.h"
+#include <stdbool.h>
+
+typedef struct s_mlx_img
+{
+	void *img_ptr;
+	int width;
+	int height;
+
+} t_mlx_img;
 
 // 3D objects
 
@@ -44,6 +53,8 @@ typedef struct s_object
 	t_obj_type type;
 	t_any_obj data;
 	t_vec3 color;
+	bool checker;
+	t_mlx_img texture;
 } t_object;
 
 // lights

@@ -9,7 +9,7 @@
  * read_float: parse one float from *s, advance *s past the digits.
  * Returns 1 on success, 0 on failure.
  */
-static bool read_float(const char **s, float *out)
+static bool read_float(char **s, float *out)
 {
 	float result;
 	float frac;
@@ -43,7 +43,7 @@ static bool read_float(const char **s, float *out)
 }
 
 /* read "x,y,z" from s */
-static bool read_vec3(const char *s, t_vec3 *out)
+static bool read_vec3(char *s, t_vec3 *out)
 {
 	float x;
 	float y;
@@ -64,7 +64,7 @@ static bool read_vec3(const char *s, t_vec3 *out)
 }
 
 /* read "r,g,b" ints 0-255, store as [0,1] vec3 */
-static bool read_rgb(const char *s, t_vec3 *out)
+static bool read_rgb(char *s, t_vec3 *out)
 {
 	float r;
 	float g;
@@ -90,7 +90,7 @@ static bool read_rgb(const char *s, t_vec3 *out)
 
 // Given a string (tok), the type to convert it (type)
 // Copy it to *dest
-static bool convert_token(const char *tok, t_token_type type, void *dest)
+static bool convert_token(t_app *app, char *tok, t_token_type type, void *dest)
 {
 	t_vec3 v;
 	float f;
@@ -101,7 +101,10 @@ static bool convert_token(const char *tok, t_token_type type, void *dest)
 		if (!read_vec3(tok, &v))
 			return (false);
 		if (type == T_UNIT && (vec3_length(v) > 1.01 || vec3_length(v) < 0.99))
-			return (printf("Not normalized vector. \n"), false);
+		{
+			printf("warning: `%s` is not a normalized vector. \n", tok);
+			v = vec3_normalize(v);
+		}
 		ft_memcpy(dest, &v, sizeof(t_vec3));
 	}
 	else if (type == T_FLOAT || type == T_DIAMETER)
@@ -127,6 +130,24 @@ static bool convert_token(const char *tok, t_token_type type, void *dest)
 			return (false);
 		ft_memcpy(dest, &v, sizeof(t_vec3));
 	}
+	else if (type == T_IS_CHECKERBOARD)
+	{
+		bool b = true;
+		if (ft_strncmp(tok, "check", -1))
+			return (false);
+		ft_memcpy(dest, &b, sizeof(bool));
+	}
+	else if (type == T_TEXTURE)
+	{
+		t_mlx_img texture;
+		texture.img_ptr = mlx_xpm_file_to_image(app->mlx_ptr, tok, &texture.width, &texture.height);
+		if (texture.img_ptr)
+		{
+			printf("Warning, failed to load file `%s` \n", tok);
+			return (false);
+		}
+		ft_memcpy(dest, &texture, sizeof(t_mlx_img));
+	}
 	else
 		return (false);
 	return (true);
@@ -138,7 +159,7 @@ static bool convert_token(const char *tok, t_token_type type, void *dest)
  * Walks the key table, converting tokens[i] for each field.
  * Returns the index of the first unconsumed token, or -1 on error.
  */
-int parse_fields(int index, char **tokens, const t_field *fields, void *dest)
+int parse_fields(t_app *app, int index, char **tokens, const t_field *fields, void *dest)
 {
 	int i;
 
@@ -152,14 +173,15 @@ int parse_fields(int index, char **tokens, const t_field *fields, void *dest)
 				ft_printf("parse error: missing required field '%s'\n", fields->name);
 				return (-1);
 			}
-			fields++;
-			continue;
 		}
-		if (!convert_token(tokens[i], fields->type, (char *)dest + fields->offset))
+		else if (!convert_token(app, tokens[i], fields->type, (char *)dest + fields->offset))
 		{
-			ft_printf("parse error: bad value '%s' for '%s'\n",
-					  tokens[i], fields->name);
-			return (-1);
+			if (fields->required)
+			{
+				ft_printf("parse error: bad value '%s' for '%s'\n",
+						  tokens[i], fields->name);
+				return (-1);
+			}
 		}
 		i++;
 		fields++;
