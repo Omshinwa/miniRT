@@ -20,7 +20,7 @@ float get_hit_plane(t_vec3 O, t_vec3 D, t_vec3 p0, t_vec3 N)
 }
 
 // From P, a point on the sphere obj, return UV
-// (u,v) ∈ [0,1]
+// (u,v) arent in [0, 1], instead they are usually outside
 void plane_uv(t_vec3 P, t_plane obj, float *u, float *v)
 {
 	// create a new 3d repere orthonormee with Z = obj.axis

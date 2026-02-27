@@ -50,7 +50,7 @@ t_app *create_app(void)
 	app->img_ptr = mlx_new_image(app->mlx_ptr, WINDOW_X, WINDOW_Y);
 	if (!app->img_ptr || !app->win_ptr || gettimeofday(&app->time, NULL) == -1)
 		exit_n_clean(app);
-	app->first_pixel = mlx_get_data_addr(app->img_ptr, &app->pixel_depth,
+	app->first_pixel = mlx_get_data_addr(app->img_ptr, &app->bits_per_pixel,
 										 &app->size_line, &app->endian);
 	if (!app->first_pixel)
 		exit_n_clean(app);

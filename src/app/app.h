@@ -13,7 +13,7 @@ typedef struct s_app
 	void *win_ptr;
 	void *img_ptr;
 	char *first_pixel;
-	int pixel_depth;
+	int bits_per_pixel;
 	int size_line;
 	int endian;
 

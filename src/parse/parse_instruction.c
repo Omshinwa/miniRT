@@ -12,7 +12,7 @@ static const t_instruction g_camera_instruction = {
 };
 
 static const t_field g_object_field[] = {
-	{"color", T_RGB, true, offsetof(t_object, color)},
+	{"color", T_RGB, false, offsetof(t_object, color)},
 	{"checkerboard", T_IS_CHECKERBOARD, false, offsetof(t_object, checker)},
 	{"texture", T_TEXTURE, false, offsetof(t_object, texture)},
 	{NULL, T_INVALID, false, 0},
@@ -84,7 +84,7 @@ static bool do_object_instruction(char **tokens, t_app *app, t_instruction instr
 	int obj_idx;
 	t_object obj;
 
-	obj = (t_object){OBJ_SPHERE, {}, {}, false, {}};
+	obj = (t_object){OBJ_SPHERE, {}, {0, 1, 0}, false, {}};
 	obj_idx = -1;
 
 	if (instruction.id == g_sphere_instruction.id)

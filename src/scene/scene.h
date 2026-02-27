@@ -1,5 +1,5 @@
-#ifndef scene_H
-#define scene_H
+#ifndef SCENE_H
+#define SCENE_H
 
 #include "../math/math.h"
 #include <stdbool.h>
@@ -9,6 +9,10 @@ typedef struct s_mlx_img
 	void *img_ptr;
 	int width;
 	int height;
+	char *first_pixel;
+	int size_line;
+	int bits_per_pixel;
+	int endian;
 
 } t_mlx_img;
 

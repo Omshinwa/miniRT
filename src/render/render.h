@@ -8,7 +8,7 @@
 static const int MAX_DRAW_DISTANCE = 99999;
 static const int g_CHECKERBOARD_SCALE_FACTOR = 10;
 
-int calc_pixel_color(t_scene *scene, int x, int y);
+int calc_pixel_color(t_app *app, int x, int y);
 
 t_vec3 camera_pixel_to_vector(t_camera camera, int pixel_x, int pixel_y);
 t_object *get_hit(t_scene *scene, t_vec3 origin, t_vec3 d_vector, float *closest_dist);
