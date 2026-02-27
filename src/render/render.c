@@ -69,7 +69,7 @@ t_vec3 compute_obj_material(t_object *obj, t_vec3 P)
 		int u = floor(uv[0] * g_CHECKERBOARD_SCALE_FACTOR);
 		int v = floor(uv[1] * g_CHECKERBOARD_SCALE_FACTOR);
 		if ((u + v) % 2 != 0)
-			color = (t_vec3){0, 0, 0};
+			color = (t_vec3){1 - color.x, 1 - color.y, 1 - color.z};
 	}
 	return (color);
 }
