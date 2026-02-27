@@ -17,7 +17,7 @@
 #include <fcntl.h>
 #include <stdio.h> /* perror */
 
-static bool parse_scene_file(t_scene *scene, const char *filename)
+static bool parse_scene_file(t_app *app, const char *filename)
 {
 	int fd;
 	char *line;
@@ -31,7 +31,7 @@ static bool parse_scene_file(t_scene *scene, const char *filename)
 	line = get_next_line_strip_nl(fd);
 	while (line)
 	{
-		if (!parse_line(line, scene))
+		if (!parse_line(line, app))
 		{
 			printf("failed to parse line: %s\n", line);
 			free(line);
@@ -79,7 +79,7 @@ int setup_scene(t_app *app, char *filename)
 
 	// app->scene->ambient_light = (t_vec3){0, 0.1, 0};
 
-	if (!parse_scene_file(app->scene, "test1.rt"))
+	if (!parse_scene_file(app, "test1.rt"))
 		exit_n_clean(app);
 
 	return (0);

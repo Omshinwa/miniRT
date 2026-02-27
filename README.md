@@ -117,3 +117,24 @@ with y being the projection of P onto the axis
 
 First we check the intersection with the ray and the plane that emcompass the disk.
 Then we check if that intersection point is inside the disk (the length from the center to that point is inferior to the radius of the disk).
+
+## Checkerboard pattern
+
+### Plane
+
+Establish a (X, Y, plane_axis) orthonormal basis.
+Knowing the P point on the surface of the plane. We have CP being the vector from the plane reference point to the point P.
+`CP = u * X + v * Y`
+u and v being the uv coordinates.
+`u = CP.X`
+`v = CP.Y`
+
+
+### Sphere
+local = vec3_normalize(vec3_minus(P, obj.pos));
+👉 Ça transforme ton point en vecteur unité depuis le centre de la sphère.
+Donc maintenant tu es sur une sphère unité.
+
+Projection sphérique → coordonnées angulaires
+Projection angulaire → carré 2D
+Damier sur ce carré

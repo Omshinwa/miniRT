@@ -58,29 +58,29 @@ t_vec3 camera_pixel_to_vector(t_camera camera, int pixel_x, int pixel_y)
 }
 
 // Given a single object and a vector+origin
-// Return the INTERSECTION point (-1 if none)
+// Return the HIT point (-1 if none)
 static float get_hit_object(t_vec3 origin, t_vec3 vector, t_object obj)
 {
-	float intersection;
+	float hit;
 
-	intersection = -1.0f;
+	hit = -1.0f;
 	if (obj.type == OBJ_SPHERE)
-		intersection = get_hit_sphere(origin, vector, obj.data.sphere);
+		hit = get_hit_sphere(origin, vector, obj.data.sphere);
 	else if (obj.type == OBJ_CYLINDER)
-		intersection = get_hit_cylinder(origin, vector, obj.data.cylinder);
+		hit = get_hit_cylinder(origin, vector, obj.data.cylinder);
 	else if (obj.type == OBJ_PLANE)
-		intersection = get_hit_plane(origin, vector, obj.data.plane.pos, obj.data.plane.normal);
+		hit = get_hit_plane(origin, vector, obj.data.plane.pos, obj.data.plane.normal);
 	else
 		assert(0);
 	// if PLANE, elif CYLINDER
-	return (intersection);
+	return (hit);
 }
 
 // given a ray (VECTOR + ORIGIN), and the environment (SCENE),
 // goes through the list of objects and return:
 // OBJ_HIT: the closest object hit (NULL if none)
 // DISTANCE: the distance it hit at (through output parameter)
-static t_object *get_hit(t_scene *scene, t_vec3 origin, t_vec3 d_vector, float *closest_dist)
+t_object *get_hit(t_scene *scene, t_vec3 origin, t_vec3 d_vector, float *closest_dist)
 {
 	t_object *obj_hit;
 	float current_dist;
@@ -99,28 +99,4 @@ static t_object *get_hit(t_scene *scene, t_vec3 origin, t_vec3 d_vector, float *
 		}
 	}
 	return (obj_hit);
-}
-
-// Given a x,y pixel coordinate, calculate its color
-int calc_pixel_color(t_scene *scene, int x, int y)
-{
-	t_vec3 d_vector;
-	t_vec3 color;
-	t_object *obj;
-	float dist;
-
-	d_vector = camera_pixel_to_vector(scene->global_cam, x, y);
-	obj = get_hit(scene, scene->global_cam.pos, d_vector, &dist);
-	color = (t_vec3){0, 0, 0};
-
-	if (obj) // we hit something
-	{
-		float clamp;
-		clamp = fmaxf(0, 255.0f - dist);
-		color = (t_vec3){clamp / 255.0f, clamp / 255.0f, clamp / 255.0f}; // gray
-		color = color_mult(color, obj->color);
-	}
-	// if ambient light
-	color = vec3_add(color, vec3_scale(scene->ambient_light.color, scene->ambient_light.brightness));
-	return to_color_int(color);
 }
