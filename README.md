@@ -17,16 +17,41 @@ when we press up, we use cam->up's orientation vector to move the camera's y pos
 
 https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
 
-# MATH
+# MATH TOOLS
 
-## dot product geometrical interpretation
-How much are two vectors pointing in the same direction?
-f θ < 90° → cos(θ) > 0 → dot > 0
-→ vectors generally point same direction
-If θ = 90° → cos(θ) = 0 → dot = 0
-→ vectors are perpendicular
-If θ > 90° → cos(θ) < 0 → dot < 0
-→ vectors point opposite directions
+## dot product (fr: produit scalaire)
+
+Let A and B be two vectors of the same dimension, the dot product is defined as:
+
+`A.B = |A| * |B| * cos(θ)`
+
+Geometrically, A.B is the length of the orthogonal projection of A onto the line passing through B.
+A.B >  0  ←→ A and B points in the same direction.
+A.B == 0  ←→ vectors are perpendicular
+A.B <  0  ←→ vectors point opposite directions
+
+In an orthonormee basis space, it can also be calculated using the coordinates of the vectors A and B.
+if A(xa, ya) and B(xb, yb), then
+
+`A.B = xa * xb + ya * yb`
+
+or also
+
+`A.B = 1/2 ( |A+B|² - |A|² - |B|² )`
+`A.B = 1/2 ( |A|² + |B|² - |A-B|² )`
+
+### normalized case
+
+if B is normalized, then `A.B = |A| * cos(θ)`. It is the length of the orthogonal projection of A onto B.
+if both are normalized, then `A.B = cost(θ)`.
+
+## cross product (fr: produit vectoriel)
+
+Let A and B be two 3D vectors. The cross product, A × B is a vector C that is orthogonal to the plane defined by A and B (/ orthonogal to both A and B).
+
+	Cx=	Ay * Bz - Az * By
+	Cy=	Az * Bx - Ax * Bz
+	Cz=	Ax * By - Ay * Bx
 
 # Calculating intersection with objects
 
@@ -108,6 +133,8 @@ Finding the intersection point with the tube is equivalent to determining
 with OC_perp being the perpendicular component of OC along A.
 C is the center of the cylinder.
 
+### 2)
+
 we get `t`. We check if P(t) is inside the finite cylinder.
 -cylinder.height / 2< y < cylinder.height / 2
 with y being the projection of P onto the axis
@@ -118,19 +145,26 @@ with y being the projection of P onto the axis
 First we check the intersection with the ray and the plane that emcompass the disk.
 Then we check if that intersection point is inside the disk (the length from the center to that point is inferior to the radius of the disk).
 
-## Checkerboard pattern
+## UV
 
-### Plane
+For each object, we have a function that turns a point P(x,y,z) on the object to (u,v) coordinates.
+Using those (u,v) coordinate, we can associate them to a pixel position on a 2D texture image.
+
+### Plane point to UV
 
 Establish a (X, Y, plane_axis) orthonormal basis.
-Knowing the P point on the surface of the plane. We have CP being the vector from the plane reference point to the point P.
+X and Y are two normalized vector on the plane.
+For P, a point on the plane. We have CP being the vector from the plane center point to the point P such that:
 `CP = u * X + v * Y`
-u and v being the uv coordinates.
-`u = CP.X`
-`v = CP.Y`
+But see that
+`CP⋅X = |CP|cos(θ)` because |X| = 1.
+In trigonometry, |CP|cos(θ) is exactly the length of the projection of CP onto the line defined by X. This length is, by definition, the u coordinate.
+So we have
+`u = CP⋅X`
+`v = CP⋅Y`
 
 
-### Sphere
+### Sphere point to UV
 local = vec3_normalize(vec3_minus(P, obj.pos));
 👉 Ça transforme ton point en vecteur unité depuis le centre de la sphère.
 Donc maintenant tu es sur une sphère unité.
