@@ -140,8 +140,7 @@ static bool convert_token(t_app *app, char *tok, t_token_type type, void *dest)
 	else if (type == T_TEXTURE)
 	{
 		t_mlx_img texture;
-		// texture.img_ptr = mlx_xpm_file_to_image(app->mlx_ptr, tok, &texture.width, &texture.height);
-		texture.img_ptr = mlx_xpm_file_to_image(app->mlx_ptr, "/home/wiwu/Documents/miniRT/earth.xpm", &texture.width, &texture.height);
+		texture.img_ptr = mlx_xpm_file_to_image(app->mlx_ptr, tok, &texture.width, &texture.height);
 		if (!texture.img_ptr)
 		{
 			printf("warning, failed to load file `%s` \n", tok);

@@ -165,6 +165,7 @@ So we have
 
 
 ### Sphere point to UV
+https://en.wikipedia.org/wiki/UV_mapping
 local = vec3_normalize(vec3_minus(P, obj.pos));
 👉 Ça transforme ton point en vecteur unité depuis le centre de la sphère.
 Donc maintenant tu es sur une sphère unité.
