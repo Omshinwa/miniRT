@@ -1,7 +1,3 @@
-#include "../main.h"
-#include "../app/app.h"
-#include "parse_private.h"
-
 // Z is forward
 // X is right
 // Y is up
@@ -13,6 +9,7 @@
 // CAMERA x ---->
 
 #include "../main.h"
+#include "../app/app.h"
 #include "parse_private.h"
 #include <fcntl.h>
 #include <stdio.h> /* perror */
@@ -52,7 +49,7 @@ int setup_scene(t_app *app, char *filename)
 	(void)filename;
 
 	// init scene
-	app->scene = calloc(1, sizeof(t_scene));
+	app->scene = ft_calloc(1, sizeof(t_scene));
 	if (!app->scene)
 		exit_n_clean(app);
 

@@ -48,7 +48,7 @@ static const t_instruction g_cylinder_instruction = {
 
 static const t_instruction g_light_instruction = {
 	"L",
-	offsetof(t_scene, light),
+	offsetof(t_scene, lights),
 	{{"pos", T_VEC, true, offsetof(t_light, pos)},
 	 {"brightness", T_FLOAT, true, offsetof(t_light, brightness)},
 	 {"color", T_RGB, false, offsetof(t_light, color)},
@@ -139,13 +139,8 @@ static bool do_non_object_instruction(char **tokens, t_app *app, t_instruction i
 	// if it was a camera, do an additional instruction
 	if (instruction.id == g_camera_instruction.id)
 	{
-		if (!camera_derive_basis(&app->scene->global_cam))
+		if (!camera_derive_basis(&app->scene->global_cam)) // move this to a POST_PARSE_INSTRUCTIONS TODO
 			return (false);
-	}
-	else
-	{
-		printf("No instruction for `%s` \n", instruction.id);
-		assert(0);
 	}
 	return (true);
 }

@@ -4,6 +4,8 @@
 #include <float.h> // for FLT_MAX
 #include <math.h>
 
+#include <assert.h> // remove for build
+
 #define PI 3.14159265358979323846
 
 // MATHS

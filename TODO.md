@@ -10,7 +10,7 @@
 
 # parse
 errors should print to stderr
-check for uniqueness of 'C', 'A' etc
+check for uniqueness of 'C', 'A' etc (david does it with a bool .defined)
 brightness should be between 0 and 1 (it doesnt verify it for now)
 
 # errors / cleanup
@@ -18,3 +18,12 @@ check for illegal norm (are globals names correctly, defines in the correct plac
 remove assert()
 
 on exit_and_clean, destroy_image for each obj
+
+
+MERGE THE TWO PROJECTS
+
+CAMERA HOOKS (william)
+LIGHT / render (david)
+PARSING (william + david)
+raytracing HIT CALCS (william)
+UV (william)

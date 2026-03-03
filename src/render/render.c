@@ -1,6 +1,5 @@
 #include "render.h"
 #include "../main.h"
-#include "../render/render.h"
 #include "../../minilibx-linux/mlx.h"
 #include "../app/app.h"
 
@@ -110,23 +109,27 @@ int calc_pixel_color(t_app *app, int x, int y) // scene, not app
 {
 	t_vec3 d_vector;
 	t_vec3 color;
-	t_object *obj;
-	float dist;
+	// t_object *obj;
+	t_hit hit;
 
 	d_vector = camera_pixel_to_vector(app->scene->global_cam, x, y);
-	obj = get_hit(app->scene, app->scene->global_cam.pos, d_vector, &dist);
+	// obj = get_hit(app->scene, app->scene->global_cam.pos, d_vector, &dist);
+
+	hit = intersect_objects(app->scene, app->scene->global_cam.pos, d_vector);
+	
 	color = (t_vec3){0, 0, 0};
 
-	if (obj) // we hit something
+	if (hit.obj) // we hit something
 	{
-		float clamp;
-		clamp = fmaxf(0, 255.0f - dist);
-		color = (t_vec3){clamp / 255.0f, clamp / 255.0f, clamp / 255.0f}; // gray
+		// float clamp;
+		// clamp = fmaxf(0, 255.0f - dist);
+		// color = (t_vec3){clamp / 255.0f, clamp / 255.0f, clamp / 255.0f}; // gray
 
 		// calc UV and do diverse stuff
 		// // object checkerboard pattern
-		t_vec3 P = t_to_P(app->scene->global_cam.pos, d_vector, dist);
-		color = color_mult(color, compute_obj_material(obj, P));
+		// color = compute_lighting(scene, hit, ray);
+		t_vec3 P = t_to_P(app->scene->global_cam.pos, d_vector, hit.t);
+		color = color_mult(color, compute_obj_material(hit.obj, P));
 	}
 	// if ambient light
 	color = vec3_add(color, vec3_scale(app->scene->ambient_light.color, app->scene->ambient_light.brightness));

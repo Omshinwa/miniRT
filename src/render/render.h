@@ -5,13 +5,33 @@
 #include "../app/app.h"
 #include "../main.h"
 
-static const int MAX_DRAW_DISTANCE = 99999;
+typedef struct s_hit
+{
+	float		t;
+	t_vec3		point;
+	t_vec3		normal;
+	t_vec3		color;
+	int			hit;
+	t_object	*obj;
+}	t_hit;
+
+// DIR is the normalized directional vector
+typedef struct s_ray
+{
+	t_vec3 origin;
+	t_vec3 dir;
+} t_ray;
+
+
+static const int MAX_DRAW_DISTANCE = 1e8;
 static const int g_CHECKERBOARD_SCALE_FACTOR = 10;
 
 int calc_pixel_color(t_app *app, int x, int y);
 
-t_vec3 camera_pixel_to_vector(t_camera camera, int pixel_x, int pixel_y);
 t_object *get_hit(t_scene *scene, t_vec3 origin, t_vec3 d_vector, float *closest_dist);
+
+
+t_hit intersect_objects(t_scene *scene, t_vec3 origin, t_vec3 d_vector);
 
 // object render
 float get_hit_sphere(t_vec3 origin, t_vec3 D, t_sphere sphere);

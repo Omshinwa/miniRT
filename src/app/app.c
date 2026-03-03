@@ -40,7 +40,7 @@ t_app *create_app(void)
 {
 	t_app *app;
 
-	app = calloc(1, sizeof(t_app));
+	app = ft_calloc(1, sizeof(t_app));
 	if (!app)
 		return (NULL);
 	app->mlx_ptr = mlx_init();

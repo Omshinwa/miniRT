@@ -81,8 +81,9 @@ float vec3_length(t_vec3 v) { return sqrtf(dot_product(v, v)); }
 t_vec3 vec3_normalize(t_vec3 v)
 {
 	float l = vec3_length(v);
-	if (l == 0.0f)
-		return v;
+	assert(l > 0);
+	if (l < FLT_EPSILON)
+		return ((t_vec3){0.0f, 0.0f, 0.0f});
 	return vec3_scale(v, 1.0f / l);
 }
 

@@ -5,6 +5,16 @@ valgrind --leak-check=full ./miniRT
 
 # Camera
 
+## View of the world
+
+We construct a normalized directional ray from the camera for each pixel points.
+We create a pixel(x,y) -> Point(x,y,z) on virtual screen function.
+The FOV (field of view), is the angle that tells us how much we see.
+
+2) So we first have to calculate the coordinates of that point P.
+
+3) Then at the end we normalize this directional vector.
+
 ## Explanation camera movement
 	else if (keycode == g_KEY_ARROW_UP)
     {

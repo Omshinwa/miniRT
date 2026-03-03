@@ -100,6 +100,11 @@ static bool convert_token(t_app *app, char *tok, t_token_type type, void *dest)
 	{
 		if (!read_vec3(tok, &v))
 			return (false);
+		if (type == T_UNIT && vec3_length(v) < FLT_EPSILON)
+		{
+			printf("Error: `%s` is not a normalized vector. \n", tok);
+			return (false);
+		}
 		if (type == T_UNIT && (vec3_length(v) > 1.01 || vec3_length(v) < 0.99))
 		{
 			printf("warning: `%s` is not a normalized vector. \n", tok);

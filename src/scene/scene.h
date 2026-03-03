@@ -86,14 +86,18 @@ typedef struct s_scene
 	t_object *objects;
 	int number_of_obj;
 	// liste des lumieres
-	t_light light;
+	t_light *lights;
+	int number_of_light;
 	// lumiere ambiente
 	t_light ambient_light;
+
 
 } t_scene;
 
 void camera_pitch(t_camera *cam, float angle);
 void camera_yaw(t_camera *cam, float angle);
 void camera_roll(t_camera *cam, float angle);
+
+t_vec3 camera_pixel_to_vector(t_camera camera, int pixel_x, int pixel_y);
 
 #endif
