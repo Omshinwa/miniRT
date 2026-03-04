@@ -53,7 +53,7 @@ t_vec3 vec3_negate(t_vec3 v)
 
 t_vec3	get_sphere_normal(t_sphere *sp, t_vec3 *point)
 {
-	return (vec3_normalize(vec3_minus(*point, sp->pos)));
+	return (vec3_normalize(vec3_sub(*point, sp->pos)));
 }
 t_vec3 get_plane_normal(t_plane *pl, t_ray *ray)
 {
@@ -74,7 +74,7 @@ static t_vec3	get_normal(t_object *obj, t_vec3 *point, t_ray *ray)
 
 static void	fill_hit_info(t_hit *hit, t_ray *ray)
 {
-	hit->point = vec3_add(ray->origin, vec3_scale(ray->dir, hit->t));
+	hit->point = vec3_add(ray->origin, vec3_mul(ray->dir, hit->t));
 	hit->normal = get_normal(hit->obj, &hit->point, ray);
 	hit->color = hit->obj->color;
 }

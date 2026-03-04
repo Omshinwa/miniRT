@@ -64,18 +64,18 @@ static int on_mouse_input(int keycode, int mouse_x, int mouse_y, t_app *app)
 	(void)mouse_x;
 	(void)mouse_y;
 	(void)app;
-	t_camera *cam = &app->scene->global_cam;
+	t_camera *cam = &app->scene->camera;
 	t_vec3 delta;
 
 	if (keycode == g_MOUSE_WHEEL_UP)
 	{
-		delta = vec3_scale(cam->forward, g_MOV_STRENGTH);
+		delta = vec3_mul(cam->forward, g_MOV_STRENGTH);
 		cam->pos = vec3_add(cam->pos, delta);
 	}
 	else if (keycode == g_MOUSE_WHEEL_DN)
 	{
-		delta = vec3_scale(cam->forward, g_MOV_STRENGTH);
-		cam->pos = vec3_minus(cam->pos, delta);
+		delta = vec3_mul(cam->forward, g_MOV_STRENGTH);
+		cam->pos = vec3_sub(cam->pos, delta);
 	}
 	// else if (keycode == g_MOUSE_LEFT)
 	// 	print info on the object being clicked on
@@ -95,7 +95,7 @@ static int on_no_input(t_app *app)
 static int on_key_input(int keycode, t_app *app)
 {
 	t_scene *env = app->scene;
-	t_camera *cam = &app->scene->global_cam;
+	t_camera *cam = &app->scene->camera;
 
 	if (keycode == g_ESC_KEY)
 		exit_n_clean(app);
@@ -115,22 +115,22 @@ static int on_key_input(int keycode, t_app *app)
 	// Change cam position
 	else if (keycode == g_KEY_ARROW_UP)
 	{
-		delta = vec3_scale(cam->up, g_MOV_STRENGTH);
+		delta = vec3_mul(cam->up, g_MOV_STRENGTH);
 		cam->pos = vec3_add(cam->pos, delta);
 	}
 	else if (keycode == g_KEY_ARROW_DOWN)
 	{
-		delta = vec3_scale(cam->up, g_MOV_STRENGTH);
-		cam->pos = vec3_minus(cam->pos, delta);
+		delta = vec3_mul(cam->up, g_MOV_STRENGTH);
+		cam->pos = vec3_sub(cam->pos, delta);
 	}
 	else if (keycode == g_KEY_ARROW_LEFT)
 	{
-		delta = vec3_scale(cam->right, g_MOV_STRENGTH * WINDOW_RATIO);
-		cam->pos = vec3_minus(cam->pos, delta);
+		delta = vec3_mul(cam->right, g_MOV_STRENGTH * WINDOW_RATIO);
+		cam->pos = vec3_sub(cam->pos, delta);
 	}
 	else if (keycode == g_KEY_ARROW_RIGHT)
 	{
-		delta = vec3_scale(cam->right, g_MOV_STRENGTH * WINDOW_RATIO);
+		delta = vec3_mul(cam->right, g_MOV_STRENGTH * WINDOW_RATIO);
 		cam->pos = vec3_add(cam->pos, delta);
 	}
 	// FOV
@@ -138,14 +138,14 @@ static int on_key_input(int keycode, t_app *app)
 		cam->fov += 10;
 	else if (keycode == g_NUMPAD_MINUS)
 		cam->fov -= 10;
-	print_cam(env->global_cam);
+	print_cam(env->camera);
 	redraw(app);
 	return (0);
 }
 
 void hook_everything(t_app *app)
 {
-	mlx_key_hook(app->win_ptr, on_key_input, app);
-	mlx_mouse_hook(app->win_ptr, on_mouse_input, app);
-	mlx_loop_hook(app->mlx_ptr, on_no_input, app);
+	mlx_key_hook(app->win, on_key_input, app);
+	mlx_mouse_hook(app->win, on_mouse_input, app);
+	mlx_loop_hook(app->mlx, on_no_input, app);
 }

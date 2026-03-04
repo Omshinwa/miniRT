@@ -11,7 +11,7 @@
 
 // given two floats, return the smallest positive number between A and B
 // return -1 if they're both negative
-float min_pos_f(float a, float b)
+float min_positive_f(float a, float b)
 {
 	float min;
 	if (a < 0 && b < 0)
@@ -45,7 +45,7 @@ float quadratic_roots(float a, float b, float c)
 	t0 = (-b - sqrt_d) / (2.0f * a);
 	t1 = (-b + sqrt_d) / (2.0f * a);
 
-	return min_pos_f(t0, t1);
+	return min_positive_f(t0, t1);
 }
 
 //  █████   █████ ██████████   █████████  ███████████  ████████
@@ -58,7 +58,7 @@ float quadratic_roots(float a, float b, float c)
 //      ▒▒▒      ▒▒▒▒▒▒▒▒▒▒   ▒▒▒▒▒▒▒▒▒     ▒▒▒▒▒     ▒▒▒▒▒▒▒▒
 
 // Returns the dot product of two vectors
-float dot_product(t_vec3 a, t_vec3 b) { return (a.x * b.x + a.y * b.y + a.z * b.z); }
+float vec3_dot(t_vec3 a, t_vec3 b) { return (a.x * b.x + a.y * b.y + a.z * b.z); }
 // Cross product: A × B
 // The cross product returns the vector that is normal to the plane defined by a and b
 t_vec3 vec3_cross(t_vec3 a, t_vec3 b)
@@ -72,19 +72,19 @@ t_vec3 vec3_cross(t_vec3 a, t_vec3 b)
 // A + B
 t_vec3 vec3_add(t_vec3 a, t_vec3 b) { return (t_vec3){a.x + b.x, a.y + b.y, a.z + b.z}; }
 // V*s
-t_vec3 vec3_scale(t_vec3 v, float s) { return (t_vec3){v.x * s, v.y * s, v.z * s}; }
+t_vec3 vec3_mul(t_vec3 v, float s) { return (t_vec3){v.x * s, v.y * s, v.z * s}; }
 // A - B
-t_vec3 vec3_minus(t_vec3 a, t_vec3 b) { return ((t_vec3){a.x - b.x, a.y - b.y, a.z - b.z}); }
+t_vec3 vec3_sub(t_vec3 a, t_vec3 b) { return ((t_vec3){a.x - b.x, a.y - b.y, a.z - b.z}); }
 // uses srqt
-float vec3_length(t_vec3 v) { return sqrtf(dot_product(v, v)); }
+float vec3_len(t_vec3 v) { return sqrtf(vec3_dot(v, v)); }
 // Return normalized V, uses sqrt
 t_vec3 vec3_normalize(t_vec3 v)
 {
-	float l = vec3_length(v);
+	float l = vec3_len(v);
 	assert(l > 0);
 	if (l < FLT_EPSILON)
 		return ((t_vec3){0.0f, 0.0f, 0.0f});
-	return vec3_scale(v, 1.0f / l);
+	return vec3_mul(v, 1.0f / l);
 }
 
 // given a parameter t, returns P defined as P = O + D*t
@@ -92,7 +92,7 @@ t_vec3 vec3_normalize(t_vec3 v)
 // D the normalized! directional vector
 t_vec3 t_to_P(t_vec3 O, t_vec3 D, float t)
 {
-	return (vec3_add(O, vec3_scale(D, t)));
+	return (vec3_add(O, vec3_mul(D, t)));
 }
 
 //    █████████     ███████    █████          ███████    ███████████

@@ -6,7 +6,7 @@
 /*   By: wiwu <wiwu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/03 06:33:31 by dasamuel          #+#    #+#             */
-/*   Updated: 2026/03/03 12:30:55 by wiwu             ###   ########.fr       */
+/*   Updated: 2026/03/04 07:17:14 by wiwu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ t_vec3 apply_specular(t_light *light, t_hit *hit,
 	t_vec3 spec_color;
 
 	reflect = vec3_reflect(vec3_negate(ctx->light_dir), hit->normal);
-	view_dir = vec3_normalize(vec3_minus(ray->origin, hit->point));
+	view_dir = vec3_normalize(vec3_sub(ray->origin, hit->point));
 	spec_dot = ft_dclamp(vec3_dot(reflect, view_dir), 0.0, 1.0);
 	ctx->spec = pow(spec_dot, SPEC_POW) * light->brightness;
 	spec_color = color_mul_scalar(light->color, ctx->spec);

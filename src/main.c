@@ -22,7 +22,7 @@ int main(void)
 	setup_scene(app, "filename");
 	if (!app)
 		return (-1);
-	mlx_hook(app->win_ptr, 17, 0, exit_n_clean, app);
+	mlx_hook(app->win, 17, 0, exit_n_clean, app);
 	redraw(app);
-	mlx_loop(app->mlx_ptr);
+	mlx_loop(app->mlx);
 }

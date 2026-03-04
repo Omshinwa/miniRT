@@ -18,7 +18,7 @@ The FOV (field of view), is the angle that tells us how much we see.
 ## Explanation camera movement
 	else if (keycode == g_KEY_ARROW_UP)
     {
-        delta = vec3_scale(cam->up, g_MOV_STRENGTH);
+        delta = vec3_mul(cam->up, g_MOV_STRENGTH);
         cam->pos = vec3_add(cam->pos, delta);
     }
 when we press up, we use cam->up's orientation vector to move the camera's y position. Not just camera.pos.y += g_MOV_STRENGTH!
@@ -176,7 +176,7 @@ So we have
 
 ### Sphere point to UV
 https://en.wikipedia.org/wiki/UV_mapping
-local = vec3_normalize(vec3_minus(P, obj.pos));
+local = vec3_normalize(vec3_sub(P, obj.pos));
 👉 Ça transforme ton point en vecteur unité depuis le centre de la sphère.
 Donc maintenant tu es sur une sphère unité.
 

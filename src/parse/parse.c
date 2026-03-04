@@ -55,7 +55,7 @@ int setup_scene(t_app *app, char *filename)
 
 	// This is the default camera, a camera at pos 0 with the default fov and
 	// orientation vectors.
-	app->scene->global_cam = (t_camera){{0, 0, 0},
+	app->scene->camera = (t_camera){{0, 0, 0},
 										{0, 0, 1},
 										{1, 0, 0},
 										{0, 1, 0},

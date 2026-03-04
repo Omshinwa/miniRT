@@ -100,12 +100,12 @@ static bool convert_token(t_app *app, char *tok, t_token_type type, void *dest)
 	{
 		if (!read_vec3(tok, &v))
 			return (false);
-		if (type == T_UNIT && vec3_length(v) < FLT_EPSILON)
+		if (type == T_UNIT && vec3_len(v) < FLT_EPSILON)
 		{
 			printf("Error: `%s` is not a normalized vector. \n", tok);
 			return (false);
 		}
-		if (type == T_UNIT && (vec3_length(v) > 1.01 || vec3_length(v) < 0.99))
+		if (type == T_UNIT && (vec3_len(v) > 1.01 || vec3_len(v) < 0.99))
 		{
 			printf("warning: `%s` is not a normalized vector. \n", tok);
 			v = vec3_normalize(v);
@@ -145,13 +145,13 @@ static bool convert_token(t_app *app, char *tok, t_token_type type, void *dest)
 	else if (type == T_TEXTURE)
 	{
 		t_mlx_img texture;
-		texture.img_ptr = mlx_xpm_file_to_image(app->mlx_ptr, tok, &texture.width, &texture.height);
-		if (!texture.img_ptr)
+		texture.img.mlx_img = mlx_xpm_file_to_image(app->mlx, tok, &texture.width, &texture.height);
+		if (!texture.img.mlx_img)
 		{
 			printf("warning, failed to load file `%s` \n", tok);
 			return (false);
 		}
-		texture.first_pixel = mlx_get_data_addr(texture.img_ptr, &texture.bits_per_pixel, &texture.size_line, &texture.endian);
+		texture.first_pixel = mlx_get_data_addr(texture.img.mlx_img, &texture.bits_per_pixel, &texture.size_line, &texture.endian);
 		ft_memcpy(dest, &texture, sizeof(t_mlx_img));
 	}
 	else

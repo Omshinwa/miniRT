@@ -67,10 +67,10 @@ static void rotate_around_axis(t_vec3 *v, t_vec3 k, float angle)
 	// term2 is X (0.04)
 	// term3 is Y (0)
 	// vector forward (0, 0, 1) -> (press D) -> (0.04, 0, 0.99)
-	t_vec3 term1 = vec3_scale(*v, c);
-	t_vec3 term2 = vec3_scale(vec3_cross(k, *v), s);
-	float kdotv = dot_product(k, *v);
-	t_vec3 term3 = vec3_scale(k, kdotv * (1.0f - c));
+	t_vec3 term1 = vec3_mul(*v, c);
+	t_vec3 term2 = vec3_mul(vec3_cross(k, *v), s);
+	float kdotv = vec3_dot(k, *v);
+	t_vec3 term3 = vec3_mul(k, kdotv * (1.0f - c));
 	*v = vec3_add(vec3_add(term1, term2), term3);
 }
 

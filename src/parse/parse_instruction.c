@@ -4,7 +4,7 @@
 /* Defining global constant static that will be instructions */
 static const t_instruction g_camera_instruction = {
 	"C",
-	offsetof(t_scene, global_cam),
+	offsetof(t_scene, camera),
 	{{"pos", T_VEC, true, offsetof(t_camera, pos)},
 	 {"dir", T_UNIT, true, offsetof(t_camera, forward)},
 	 {"fov", T_FOV, true, offsetof(t_camera, fov)},
@@ -115,14 +115,14 @@ static bool camera_derive_basis(t_camera *cam)
 {
 	t_vec3 world_up;
 
-	if (vec3_length(cam->forward) < 0.99 || (vec3_length(cam->forward) > 1.01))
+	if (vec3_len(cam->forward) < 0.99 || (vec3_len(cam->forward) > 1.01))
 	{
 		printf("Camera orientation vector isn't normalized.\n");
 		return (false);
 	}
 	world_up = (t_vec3){0, 1, 0};
 	/* if forward is almost parallel to world_up, use a different reference */
-	if (fabsf(dot_product(cam->forward, world_up)) > 0.99f)
+	if (fabsf(vec3_dot(cam->forward, world_up)) > 0.99f)
 		world_up = (t_vec3){0, 0, 1};
 	cam->right = vec3_normalize(vec3_cross(world_up, cam->forward));
 	cam->up = vec3_normalize(vec3_cross(cam->forward, cam->right));
@@ -139,7 +139,7 @@ static bool do_non_object_instruction(char **tokens, t_app *app, t_instruction i
 	// if it was a camera, do an additional instruction
 	if (instruction.id == g_camera_instruction.id)
 	{
-		if (!camera_derive_basis(&app->scene->global_cam)) // move this to a POST_PARSE_INSTRUCTIONS TODO
+		if (!camera_derive_basis(&app->scene->camera)) // move this to a POST_PARSE_INSTRUCTIONS TODO
 			return (false);
 	}
 	return (true);

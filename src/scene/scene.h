@@ -6,7 +6,7 @@
 
 typedef struct s_mlx_img
 {
-	void *img_ptr;
+	void *img.mlx_img;
 	int width;
 	int height;
 	char *first_pixel;
@@ -81,7 +81,7 @@ typedef struct s_camera
 
 typedef struct s_scene
 {
-	t_camera global_cam;
+	t_camera camera;
 	// pointeur vers un array d'objets a dessiner
 	t_object *objects;
 	int number_of_obj;

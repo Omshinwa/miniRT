@@ -9,9 +9,9 @@
 
 typedef struct s_app
 {
-	void *mlx_ptr;
-	void *win_ptr;
-	void *img_ptr;
+	void *mlx;
+	void *win;
+	void *img.mlx_img;
 	char *first_pixel;
 	int bits_per_pixel;
 	int size_line;

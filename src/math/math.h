@@ -10,7 +10,7 @@
 
 // MATHS
 
-float min_pos_f(float a, float b);
+float min_positive_f(float a, float b);
 float quadratic_roots(float a, float b, float c);
 
 // VECTORS
@@ -23,14 +23,14 @@ typedef struct s_vec3
 } t_vec3;
 
 t_vec3 vec3_normalize(t_vec3 v);
-float dot_product(t_vec3 a, t_vec3 b);
+float vec3_dot(t_vec3 a, t_vec3 b);
 /* Cross product: a × b */
 t_vec3 vec3_cross(t_vec3 a, t_vec3 b);
 
 t_vec3 vec3_add(t_vec3 a, t_vec3 b);
-t_vec3 vec3_scale(t_vec3 v, float s);
-t_vec3 vec3_minus(t_vec3 a, t_vec3 b);
-float vec3_length(t_vec3 v);
+t_vec3 vec3_mul(t_vec3 v, float s);
+t_vec3 vec3_sub(t_vec3 a, t_vec3 b);
+float vec3_len(t_vec3 v);
 
 t_vec3 t_to_P(t_vec3 O, t_vec3 D, float t);
 
