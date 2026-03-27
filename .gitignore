@@ -4,4 +4,4 @@
 .*
 .vscode/
 /build
-miniRT
+miniRTdemo/*.webm
