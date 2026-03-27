@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wiwu <wiwu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: dasamuel <dasamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/03 19:25:23 by wiwu              #+#    #+#             */
-/*   Updated: 2025/11/13 15:15:06 by wiwu             ###   ########.fr       */
+/*   Created: 2025/11/05 17:51:12 by dasamuel          #+#    #+#             */
+/*   Updated: 2025/11/13 08:30:54 by dasamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,15 @@
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {
-	void	*ptr;
+	size_t	total;
+	void	*s;
 
-	if (size != 0 && nmemb > ((size_t) -1 / size))
+	if (size != 0 && nmemb > (SIZE_MAX / size))
 		return (NULL);
-	ptr = malloc(nmemb * size);
-	if (!ptr)
+	total = nmemb * size;
+	s = malloc(total);
+	if (!s)
 		return (NULL);
-	ft_bzero(ptr, nmemb * size);
-	return (ptr);
+	ft_bzero(s, total);
+	return (s);
 }
-
-// #include <stdio.h>
-// #include <stdlib.h>
-// #define FUNC calloc
-// int	main(void)
-// {
-// 	char *ptr;
-// 	char *ptr2;
-// 	ptr = (char*)calloc(5, 5);
-// 	ptr2 = ptr;
-// 	printf("ORIGINAL POSITION %p %d\n", ptr, ptr);
-// 	while(!(*ptr))
-// 		ptr++;
-// 	printf("FIRST NON NUL POSITION %p %d\n", ptr, ptr);
-// 	printf("DIFF %d\n", ptr2-ptr);
-// }

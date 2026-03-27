@@ -3,47 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcat.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wiwu <wiwu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: dasamuel <dasamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/15 10:13:09 by wiwu              #+#    #+#             */
-/*   Updated: 2025/11/10 13:23:25 by wiwu             ###   ########.fr       */
+/*   Created: 2025/11/07 12:24:07 by dasamuel          #+#    #+#             */
+/*   Updated: 2025/11/13 08:09:40 by dasamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-// concatenate src to the end of dest
-// size is the size of the new dest
-// doesnt do anything if size <= len(dest)
-// If return value >= siz, truncation occurred.
-// if size = 1, it will only copy \0
-size_t	ft_strlcat(char *dest, const char *src, size_t size)
+size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 {
 	size_t	i;
-	size_t	len_dest;
-	size_t	len_src;
+	size_t	lensrc;
+	size_t	lendst;
 
 	i = 0;
-	len_dest = ft_strlen(dest);
-	len_src = ft_strlen(src);
-	if (len_dest >= size)
-		return (size + ft_strlen(src));
-	while (src[i] && i < size - len_dest - 1)
+	lensrc = ft_strlen(src);
+	lendst = ft_strlen(dst);
+	if (lendst >= dstsize)
+		return (dstsize + lensrc);
+	while ((lendst + i < dstsize - 1) && src[i])
 	{
-		dest[len_dest + i] = src[i];
+		dst[lendst + i] = src[i];
 		i++;
 	}
-	dest[len_dest + i] = '\0';
-	return (len_dest + len_src);
+	dst[lendst + i] = '\0';
+	return (lendst + lensrc);
 }
-
-// #include <stdio.h>
-// #include <bsd/string.h>
-// int	main(void)
-// {
-// 	char	dest[20] = "Hello";
-// 	char	*src = " world";
-// 	printf("\n******\n");
-// 	printf("%zu\n", strlcat(dest, src, 4));
-// 	printf("%s\n", dest);
-// }

@@ -1,67 +1,126 @@
-NAME = miniRT
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: dasamuel <dasamuel@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/03/09 10:48:13 by dasamuel          #+#    #+#              #
+#    Updated: 2026/03/18 08:51:42 by dasamuel         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-SRC =	main.c \
-		app/app.c \
-		app/hooks.c \
-		parse/get_next_line.c \
-		parse/parse_instruction.c \
-		parse/parse_token.c \
-		parse/parse.c \
-		math/math.c \
-		render/cylinder.c \
-		render/plane.c \
-		render/raytrace.c \
-		render/render.c \
-		render/sphere.c \
-		scene/camera.c
-# SRC = *.c
-OBJ = $(SRC:.c=.o)
+PURPLE		=	\033[1;35m
+RED			=	\033[1;31m
+GREEN		=	\033[1;32m
+BLUE		=	\033[1;34m
+RESET		=	\033[0m
 
-SRC_DIR = src
-OBJ_DIR = build
+TARGET		=	miniRT
 
-SOURCE_FILES = $(addprefix $(SRC_DIR)/, $(SRC))
-OBJECT_FILES = $(addprefix $(OBJ_DIR)/, $(OBJ))
-DEPENDANCIES = $(OBJECT_FILES:.o=.d)
+RM			=	rm -rf
 
-CMPL_CMD = cc -Wall -Wextra -Werror -g3 -MMD -MP #-Ofast -march=native -mtune=native -ffast-math -funroll-loops
-LINK_CMD = cc -lm -lXext -lX11
+SRCS_DIR	=	src
+
+OBJS_DIR	=	build
+
+SRCS		=	main.c						\
+				app/app.c					\
+				app/key_hook.c				\
+				app/mouse_hook.c			\
+				app/hooks.c					\
+				app/window.c				\
+				app/draw_info.c				\
+				app/camera.c				\
+				parse/get_next_line.c		\
+				parse/parse_0_file.c		\
+				parse/parse_1_line.c		\
+				parse/parse_2_instruction.c	\
+				parse/parse_3_field.c		\
+				parse/parse_4_token.c		\
+				render/lighting.c			\
+				render/render.c				\
+				render/shadow.c				\
+				render/bump_map.c			\
+				render/threaded_render.c	\
+				render/bump_tbn.c			\
+				math/math.c					\
+				math/vec3_basic.c			\
+				math/vec3_ops.c				\
+				math/vec3_utils.c			\
+				raytrace/obj_cone.c			\
+				raytrace/obj_cone2.c		\
+				raytrace/obj_cylinder.c		\
+				raytrace/obj_cylinder2.c	\
+				raytrace/obj_plane.c		\
+				raytrace/obj_sphere.c		\
+				raytrace/raytrace.c
+
+OBJS	=	$(SRCS:.c=.o)
+
+SOURCE_FILES	=	$(addprefix $(SRCS_DIR)/, $(SRCS))
+OBJECT_FILES	=	$(addprefix $(OBJS_DIR)/, $(OBJS))
+DEPENDANCIES	=	$(OBJECT_FILES:.o=.d)
+
+CPPFLAGS	=
+CFLAGS		=	-Wall -Wextra -Werror -g3 -pthread
+CMPL_CMD	=	cc $(CFLAGS) -MMD -MP $(CPPFLAGS)
+LINK_CMD	=	cc -pthread -lm -lXext -lX11
 
 # library dependencies
-LIBFT_DIR = libft
-LIBFT_A = $(LIBFT_DIR)/libft.a
-MINILIBX = minilibx-linux
-MINILIBX_A = $(MINILIBX)/libmlx.a
+LIBFT_DIR	=	libft
+LIBFT_A		=	$(LIBFT_DIR)/libft.a
+MINILIBX	=	minilibx-linux
+MINILIBX_A	=	$(MINILIBX)/libmlx_Linux.a
 
 # Rules
-all: $(NAME)
+all: $(TARGET)
+
 
 # linking
-$(NAME): $(OBJECT_FILES) Makefile $(LIBFT_A) $(MINILIBX_A)
-	$(LINK_CMD) $(OBJECT_FILES) $(LIBFT_A) $(MINILIBX_A) -o $(NAME)
+$(TARGET): $(OBJECT_FILES) Makefile $(LIBFT_A) $(MINILIBX_A)
+	@$(LINK_CMD) $(OBJECT_FILES) $(LIBFT_A) $(MINILIBX_A) -o $(TARGET)
+	@echo "$(PURPLE)"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "  ██████╗  █████╗ ██╗   ██╗████████╗██████╗  █████╗  ██████╗██╗███╗   ██╗ ██████╗ "
+	@echo "  ██╔══██╗██╔══██╗╚██╗ ██╔╝╚══██╔══╝██╔══██╗██╔══██╗██╔════╝██║████╗  ██║██╔════╝ "
+	@echo "  ██████╔╝███████║ ╚████╔╝    ██║   ██████╔╝███████║██║     ██║██╔██╗ ██║██║  ███╗"
+	@echo "  ██╔══██╗██╔══██║  ╚██╔╝     ██║   ██╔══██╗██╔══██║██║     ██║██║╚██╗██║██║   ██║"
+	@echo "  ██║  ██║██║  ██║   ██║      ██║   ██║  ██║██║  ██║╚██████╗██║██║ ╚████║╚██████╔╝"
+	@echo "  ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝      ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝ ╚═════╝ "
+	@echo ""
+	@echo "$(RED)                · ─────────────────────────────► ●  sphere"
+	@echo "              ·  $(RESET)"
+	@echo "       👁️  ·$(GREEN)  ·  ·  · ──────────────────────────────► ▭  plane"
+	@echo "$(BLUE)              ·  "
+	@echo "                · ─────────────────────────────► △  cone$(PURPLE)"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "$(GREEN)is ready 🎉🥳🎊"
+	@echo "$(GREEN)Made by$(RESET) $(RED)dasamuel $(GREEN)and $(RED)wiwu$(GREEN).$(RESET)"
 
 # compilation
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	mkdir -p $(dir $@)
-	$(CMPL_CMD) -c $< -o $@
+$(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
+	@mkdir -p $(dir $@)
+	@$(CMPL_CMD) -c $< -o $@
 
 -include $(DEPENDANCIES)
 
 clean:
-	rm -rf $(OBJ_DIR)
-	$(MAKE) -C $(LIBFT_DIR) clean
-	$(MAKE) -C $(MINILIBX) clean
+	@$(RM) $(OBJS_DIR)
+	@$(MAKE) -s -C $(LIBFT_DIR) clean
+	@$(MAKE) -C $(MINILIBX) clean  > /dev/null 2>&1
+	@echo "$(GREEN) Objects files successfully delete 🎉$(RESET)"
 
 fclean: clean
-	rm -rf $(NAME) $(NAME)_bonus
-	$(MAKE) -C $(LIBFT_DIR) fclean
-	$(MAKE) -C $(MINILIBX) clean
+	@$(RM) $(TARGET) miniRT_bonus
+	@$(MAKE) -s -C $(LIBFT_DIR) fclean
+	@echo "$(GREEN) Executable files successfully delete 🎉$(RESET)"
 
 re: fclean all
 
 $(LIBFT_A):
-	$(MAKE) -C $(LIBFT_DIR)
+	@$(MAKE) -s -C $(LIBFT_DIR)
 $(MINILIBX_A):
-	$(MAKE) -C $(MINILIBX)
+	@$(MAKE) -C $(MINILIBX) > /dev/null 2>&1
 
 .PHONY: all clean fclean re

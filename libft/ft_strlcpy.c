@@ -3,41 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wiwu <wiwu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: dasamuel <dasamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/11 15:13:45 by wiwu              #+#    #+#             */
-/*   Updated: 2025/11/13 12:12:19 by wiwu             ###   ########.fr       */
+/*   Created: 2025/11/06 14:18:25 by dasamuel          #+#    #+#             */
+/*   Updated: 2025/11/13 07:51:52 by dasamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_strlcpy(char *dest, const char *src, size_t len)
-{	
-	size_t	i;
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+{
+	size_t	lensrc;
 
-	i = 0;
-	if (len == 0)
-		return (ft_strlen(src));
-	while (src[i] && i < len - 1)
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	dest[i] = '\0';
-	return (ft_strlen(src));
+	lensrc = ft_strlen(src);
+	if (dstsize == 0)
+		return (lensrc);
+	while (*src && dstsize-- > 1)
+		*dst++ = *src++;
+	*dst = '\0';
+	return (lensrc);
 }
-
-// #include <bsd/string.h>
-// #include <stdio.h>
-// int	main(void)
-// {
-// 	char	dest[12] = "Hello";
-// 	char	*src = " world";
-
-// 	printf("\n******\n");
-// 	printf("%d\n", ft_strlcpy(dest, src, 1));
-// 	printf("%s\n", dest);
-// 	printf("%d\n", strlcpy(dest, src, 1));
-// 	printf("%s\n", dest);
-// }

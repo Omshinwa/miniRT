@@ -3,119 +3,74 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wiwu <wiwu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: dasamuel <dasamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/30 15:04:13 by wiwu              #+#    #+#             */
-/*   Updated: 2025/11/13 12:11:39 by wiwu             ###   ########.fr       */
+/*   Created: 2025/11/07 19:36:42 by dasamuel          #+#    #+#             */
+/*   Updated: 2025/11/14 10:42:57 by dasamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	count_words(const char *str, char c)
+static size_t	ft_count_words(char const *s, char c)
 {
-	int	i;
-	int	count;
-	int	at_least_one_w;
+	size_t	i;
+	size_t	count;
 
 	i = 0;
 	count = 0;
-	at_least_one_w = 0;
-	if (*str && *str != c)
-		at_least_one_w = 1;
-	while (str[i] && str[i + 1])
+	while (s[i])
 	{
-		if (str[i] == c && str[i + 1] != c)
+		if (s[i] != c && (i == 0 || s[i - 1] == c))
 			count++;
 		i++;
 	}
-	return (count + at_least_one_w);
+	return (count);
 }
 
-static void	free_array(char **arr)
+static size_t	ft_len_word(char const *s, char c)
 {
 	size_t	i;
 
-	if (!arr)
-		return ;
 	i = 0;
-	while (arr[i])
-	{
-		free(arr[i]);
+	while (s[i] && s[i] != c)
 		i++;
-	}
-	free(arr);
+	return (i);
 }
 
-// Return 0 on malloc error, 1 on success
-static int	populate_array(char const *str, char c, char **arr, size_t arr_i)
+static void	*ft_free_tab(char **tab, size_t j)
 {
-	size_t		end;
-	size_t		start;
-
-	end = 0;
-	start = 0;
-	while (end < ft_strlen(str) + 1)
-	{
-		if (str[end] == c || str[end] == '\0')
-		{
-			while (str[start] == c && end > start)
-				start++;
-			if (end > start)
-			{
-				arr[arr_i] = ft_substr(str, start, end - start);
-				if (!arr[arr_i])
-					return (0);
-				arr_i++;
-			}
-			start = end;
-		}
-		end++;
-	}
-	arr[arr_i] = NULL;
-	return (1);
+	while (j > 0)
+		free(tab[--j]);
+	free(tab);
+	return (NULL);
 }
 
-// Initialize and check for bad input
-char	**ft_split(char const *str, char c)
+char	**ft_split(char const *s, char c)
 {
-	char	**arr;
-	size_t	arr_i;
+	char	**tab;
+	size_t	i;
+	size_t	j;
+	size_t	len;
 
-	arr_i = 0;
-	if (!str)
+	if (!s)
 		return (NULL);
-	arr = malloc(sizeof(char *) * (count_words(str, c) + 1));
-	if (!arr)
+	i = 0;
+	tab = malloc(sizeof(char *) * (ft_count_words(s, c) + 1));
+	if (!tab)
 		return (NULL);
-	if (!populate_array(str, c, arr, arr_i))
+	j = 0;
+	while (*s && j < ft_count_words(s, c))
 	{
-		free_array(arr);
-		return (NULL);
+		while (s[i] && s[i] == c)
+			i++;
+		len = ft_len_word(s + i, c);
+		tab[j] = ft_substr(s, i, len);
+		if (!tab[j])
+			return (ft_free_tab(tab, j));
+		i += len;
+		j++;
 	}
-	return (arr);
+	tab[j] = NULL;
+	return (tab);
 }
-
-// #include <string.h>
-// #include <stdio.h>
-// #include <unistd.h>
-// // // test exact size
-// int	main(void)
-// {
-// 	char * * tab = ft_split("  trip  42  ", ' ');
-// 	printf("%s\n", *tab); // trip
-// 	printf("%s\n", *(tab+1)); // 42
-// 	printf("%s\n", *(tab+2)); // (null)
-// 	// printf("%s\n", *(tab+3)); // - should crash
-// 	// printf("%s\n", *(tab+4)); // -
-// 	// printf("%s\n", *(tab+5)); // -
-//
-// 	printf("testing '' and ' ' \n");
-//
-// 	tab = ft_split("", ' ');
-// 	printf("%s\n", *tab); // (null)
-// 	printf("%s\n", *tab+1); // - should crash
-// 	printf("%s\n", *tab+2); // - should crash
-//	// possible improv: on fail of ft_substr, free the whole array
-//	//	return NULL
-// }

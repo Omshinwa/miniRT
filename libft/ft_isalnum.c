@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isalnum.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wiwu <wiwu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: dasamuel <dasamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/14 11:42:52 by wiwu              #+#    #+#             */
-/*   Updated: 2025/11/12 16:08:35 by wiwu             ###   ########.fr       */
+/*   Created: 2025/11/05 15:52:09 by dasamuel          #+#    #+#             */
+/*   Updated: 2025/11/13 07:30:25 by dasamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,7 @@
 
 int	ft_isalnum(int c)
 {
-	return (ft_isalpha(c) || ft_isdigit(c));
+	if (ft_isalpha(c) || ft_isdigit(c))
+		return (1);
+	return (0);
 }
-
-// #include <stdio.h>
-// #define FUNC ft_isalnum
-// int	main(void)
-// {
-// 	printf("%d \n", FUNC('5'));
-// 	printf("%d \n", FUNC('Q'));
-// 	printf("%d \n", FUNC('@'));
-// 	printf("%d \n", FUNC('#'));
-// 	printf("%d \n", FUNC('n'));
-// 	printf("%d \n", FUNC(0));
-// }

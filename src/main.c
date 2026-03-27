@@ -1,28 +1,39 @@
-// basique:
-// soit un espace xyz.
-// on place une camera au point xyz oriente vers xyz.
-// il y a un plan (de meme resolution que l'ecran) place a une certaine distance de la camera (FOV)
-// alors, pour chaque pixel de l'ecran, on project un rayon partant de la camera
-// qui passe par le meme point sur le plan
-// et lorsqu'il rencontre un objet: ce pixel est de la couleur de l'objet
-
-// Pour chaque pixel de l'ecran:
-// faire une equation (pour chaque object) qui verifie la collision
-// dessiner le pixel.
-
-#include <stdio.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dasamuel <dasamuel@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/09 11:06:27 by dasamuel          #+#    #+#             */
+/*   Updated: 2026/03/18 06:32:14 by dasamuel         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "main.h"
 
-int main(void)
-{
-	t_app *app;
+static const int	CROSS_BUTTON = 17;
 
+// MLX hook wrapper: calls exit_n_clean on window close
+static int	hook_exit(t_app *app)
+{
+	exit_n_clean(app, NULL);
+	return (0);
+}
+
+// Entry point: create app, parse scene file, render and start MLX event loop
+int	main(int argc, char **argv)
+{
+	t_app	*app;
+
+	if (argc != 2)
+		exit_n_clean(NULL, RED "Format should be `./miniRT FILEPATH.rt`" RESET);
 	app = create_app();
-	setup_scene(app, "filename");
 	if (!app)
-		return (-1);
-	mlx_hook(app->win_ptr, 17, 0, exit_n_clean, app);
+		exit_n_clean(app, RED "Failed to create app." RESET);
+	setup_scene(app, argv[1]);
+	mlx_hook(app->win, CROSS_BUTTON, 0, hook_exit, app);
 	redraw(app);
-	mlx_loop(app->mlx_ptr);
+	mlx_loop(app->mlx);
+	return (0);
 }

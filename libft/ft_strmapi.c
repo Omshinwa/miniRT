@@ -3,61 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wiwu <wiwu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: dasamuel <dasamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/30 15:04:13 by wiwu              #+#    #+#             */
-/*   Updated: 2025/11/27 12:54:29 by wiwu             ###   ########.fr       */
+/*   Created: 2025/11/07 17:29:24 by dasamuel          #+#    #+#             */
+/*   Updated: 2025/11/13 11:10:31 by dasamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-// Function Name	
-// ft_strmapi
-// Prototype
-// char *ft_strmapi(char const *s, char (*f)(unsigned int, char));
-// Parameters
-// s: The string to iterate over.
-// f: The function to apply to each character.
-// Return Value
-// The string created from the successive applications of ’f’.
-// Returns	NULL if the allocation fails.
-// External Function - malloc
-// Description 
-// Applies the function f to each character of the
-// string s, passing its index as the first argument
-// and the character itself as the second. A new
-// string is created (using malloc(3)) to store the
-// results from the successive applications of f.
 
 #include "libft.h"
 
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 {
-	char			*res;
-	unsigned int	i;
+	size_t	i;
+	size_t	len;
+	char	*str;
 
 	i = 0;
-	res = malloc(sizeof(char) * (ft_strlen(s) + 1));
-	if (!res)
+	if (!s || !f)
 		return (NULL);
-	while (s[i])
+	len = ft_strlen(s);
+	str = malloc(len + 1);
+	if (!str)
+		return (NULL);
+	while (i < len)
 	{
-		res[i] = f(i, s[i]);
+		str[i] = f(i, (char)s[i]);
 		i++;
 	}
-	res[i] = 0;
-	return (res);
+	str[i] = '\0';
+	return (str);
 }
-
-// // test unit
-// // erase 1 letter out of 2
-// #include <stdio.h>
-// char test_f(unsigned int i, char s)
-// {
-// 	if (i % 2)
-// 		return ('_');
-// 	return (s);
-// }
-// int	main(void)
-// {
-// 	printf("result: %s \n", ft_strmapi("salut la terre", &test_f));
-// }

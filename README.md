@@ -1,175 +1,184 @@
-# Useful commands
+*This project has been created as part of the 42 curriculum by dasamuel and wiwu.*
 
-valgrind --leak-check=full ./miniRT
+---
 
+# miniRT — A Ray Tracer in C
 
-# Camera
+![42 Badge](https://img.shields.io/badge/42-miniRT-blue)
+![Language](https://img.shields.io/badge/language-C-lightgrey)
+![Score](https://img.shields.io/badge/score-125%2F100-brightgreen)
 
-## Explanation camera movement
-	else if (keycode == g_KEY_ARROW_UP)
-    {
-        delta = vec3_scale(cam->up, g_MOV_STRENGTH);
-        cam->pos = vec3_add(cam->pos, delta);
-    }
-when we press up, we use cam->up's orientation vector to move the camera's y position. Not just camera.pos.y += g_MOV_STRENGTH!
+---
 
-## Rotation for camera
+## Description
 
-https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
+**miniRT** is a ray tracer written in C, built as part of the 42 school curriculum. The goal of the project is to implement the fundamental principles of ray tracing from scratch: casting rays from a camera into a 3D scene, computing intersections with geometric primitives, and simulating the interaction of light with surfaces.
 
-# MATH TOOLS
+The program parses a `.rt` scene file, renders the resulting image in a window using **MiniLibX**, and supports the following mandatory features:
 
-## dot product (fr: produit scalaire)
+- **Geometric primitives**: sphere, plane, cylinder
+- **Lighting model**: ambient light, diffuse (Lambertian) shading, hard shadows
+- **Camera**: configurable position, orientation, and field of view
+- **Scene description**: parsed from a `.rt` text file
 
-Let A and B be two vectors of the same dimension, the dot product is defined as:
+### Bonus Features
 
-`A.B = |A| * |B| * cos(θ)`
+- Specular highlights (Phong reflection model)
+- Checkerboard texture pattern (UV-mapped on all primitives)
+- Bump mapping / normal perturbation using XPM texture maps
+- Additional primitives: **cone**, **disk**, **hyperboloid** *(optional)*
+- Multi-light support
+- Colored lights
 
-Geometrically, A.B is the length of the orthogonal projection of A onto the line passing through B.
-A.B >  0  ←→ A and B points in the same direction.
-A.B == 0  ←→ vectors are perpendicular
-A.B <  0  ←→ vectors point opposite directions
+---
 
-In an orthonormee basis space, it can also be calculated using the coordinates of the vectors A and B.
-if A(xa, ya) and B(xb, yb), then
+## Instructions
 
-`A.B = xa * xb + ya * yb`
+### Requirements
 
-or also
+- **OS**: Linux or macOS
+- **Compiler**: `gcc` or `clang`
+- **MiniLibX**: included or installed separately depending on your system
+- **Make**
 
-`A.B = 1/2 ( |A+B|² - |A|² - |B|² )`
-`A.B = 1/2 ( |A|² + |B|² - |A-B|² )`
+### Compilation
 
-### normalized case
+```bash
+# Clone the repository
+git clone git@vogsphere.42paris.fr:vogsphere/intra-uuid-3bcc727e-6788-4b4a-8c4a-f7668893ac81-7220980-wiwu miniRT
+cd miniRT
 
-if B is normalized, then `A.B = |A| * cos(θ)`. It is the length of the orthogonal projection of A onto B.
-if both are normalized, then `A.B = cost(θ)`.
+# Build
+make
+```
 
-## cross product (fr: produit vectoriel)
+### Execution
 
-Let A and B be two 3D vectors. The cross product, A × B is a vector C that is orthogonal to the plane defined by A and B (/ orthonogal to both A and B).
+```bash
+./miniRT scenes/<filename>.rt
+```
 
-	Cx=	Ay * Bz - Az * By
-	Cy=	Az * Bx - Ax * Bz
-	Cz=	Ax * By - Ay * Bx
+The `.rt` file describes the scene using identifiers. Each line defines one element:
 
-# Calculating intersection with objects
+| Identifier | Element           | Fields in order										|
+|------------|-------------------|------------------------------------------------------|
+| `A`        | Ambient light     | Brightness, Color									|
+| `C`        | Camera            | Position, Orientation, FOV							|
+| `L`        | Point light       | Position, Brightness, Color							|
+| `sp`       | Sphere            | Position, Diameter, Color				 			|
+| `pl`       | Plane             | Position, Orientation, Color							|
+| `cy`       | Cylinder          | Position, Orientation, Diameter, Height, Color		|
+| `co`       | Cone *(bonus)*    | Position, Orientation, Opening angle, Height, Color	|
 
-## Intersection sphere:
+Field definitions:
+Brightness: number in [0,1]
+Color: 3 integers in [0-255]
+Position: 3 numbers separated by a comma `,` eg: `0.2,-45,788789`
+Orientation: 3 numbers in [-1,1] separated by a comma `,` represents a 3D vector with a norm of 1
+FOV: integer in [0,180]
+Diameter, Height, Opening angle: single number, note that the opening angle is in radians.
 
-A ray is defined as
-`P(t) = O + D*t`
-Where P is the collection of points forming the ray.
-O is the origin of the ray (the camera).
-D the direction vector.
-t a parameter describing time.
+(optional)
+For Shapes, they can have a Texture instead of the Color field.
+They can also optionally have a bump map Texture as the last field.
+A Texture is a file path to a .xpm file.
+A key word `check` can be put between the Color/Texture and the Bump map texture of the
+shape, this will have the object be displayed in checkerboard.
+eg: `pl  15,0,0    0,1,0    scenes/earth.xpm     check    scenes/moon.xpm`
 
-A sphere centered around the point C with radius r satisfies:
-`(x - Cx)² + (y - Cy)² = r²`
-It can be rewritten in vector form as:
-`|P - C|² = r²`, with P(x, y)
+### Example Scene File
 
-A point that is the intersection of both the ray and the sphere must
-verify both equations:
+```
+A  0.2  255,255,255
 
-`P(t) = O + D*t`
-`|P - C|² = r²`
+C  0,0,-5  0,0,1  70
 
-By substituting the ray equation into the sphere equation:
-`|O + D*t - C|² = r²`
+L  -2,5,-3  0.8  255,255,255
 
-Let `L = 0 - C` (vector from sphere center to ray origin), we have:
+sp  0,0,0  2  255,0,0
+pl  0,-2,0  0,1,0  100,200,100
+cy  1,0,3  0,1,0  1  3  0,0,255
+```
 
-`|D*t + L|² = r²`
-Expand the squared length (dot product with itself)
-`|D|²*t² + 2(D.L)*t + |L|² - r² = 0`
+### Controls
 
-This is a quadratic equation in `t` with the form
-`a*t² + b*t + c = 0`, where
+| Key           | Action             									|
+|---------------|-------------------------------------------------------|
+| `ESC` key		| Close the window   									|
+| Red cross		| Close the window   									|
+| Arrow keys    | Move the camera (or the active object)				|
+| Numpad keys   | Toggle on or off some of the rendering pipeline 		|
+| `WASDQE` keys | Rotate the camera (or the active object, if possible)	|
+| `+-` keys		| Change the camera's Field Of View						|
 
-`a= D.D`, `b= 2(D.L)`, `c= L.L - r²`
+---
 
-We solve it, 
+## Features
 
-If Δ<0: no intersection
-If Δ=0: one intersection (tangent)
-If Δ>0: two intersections
+### Mandatory
 
-## Intersection plane:
+- [x] Sphere, plane, cylinder intersection
+- [x] Ambient + diffuse lighting
+- [x] Hard shadows
+- [x] Scene parsing from `.rt` file
+- [x] MiniLibX window rendering
 
-Equation d'un plan defini par un point P quelconque sur le plan, avec le vecteur normal N et R un point de reference du plan:
-`(P - R) . N = 0`
-Substitute P with `P = O + D * t`, O is the origin of the ray, D is the directional vector
-`(O + D * t - R) . N = 0`
-solve for t: (we check if it's positive, if the plane is in front of the camera)
-`(O + D * t - R) . N = 0` ==
-`O.N + (D*t).N - R.N = 0` ==
-`(D*t).N = - O.N + R.N` ==
-`t*(D.N) = R.N - O.N` ==
+### Bonus
 
-`t = (R - O) . N / (D . N)`
+- [x] Phong specular highlights
+- [x] Checkerboard texture (UV-mapped)
+- [x] Bump mapping via XPM height maps
+- [x] Cone primitive
+- [x] Multi-light support
+- [x] Colored lights
 
-## Intersection cylinder:
+---
 
-1) Find the intersection points between the ray and the infinite cylinder tube.
-2) Check if those points are inside the finite cylinder.
-3) Find the intersection with the two disks that are the top and bottom of the cylinder.
+## Technical Choices
 
--> returns the lowest positive t between the hits of the disks and the tube.
+- **global variables** Used for parsing (they are const static, which is compliant with the Norm), they connect each field of an object with how they should be formatted in the file. This allow for a single parsing function `do_instruction` that handles all entities uniformly instead of writing one parser per object type.
+- **Norminette compliant**: functions ≤ 25 lines, files ≤ 5 functions, lines ≤ 80 chars
+- **Vector math** implemented from scratch: dot product, cross product, normalization, reflection
+- **UV mapping** computed analytically per primitive (sphere: spherical, cylinder/cone: cylindrical, plane: planar)
+- **Bump mapping** uses the TBN frame (Tangent/Bitangent/Normal) and central-difference gradients sampled from the XPM heightmap
 
-### 1)
-I would have done it in the geometrical approach, but apparently it's slower. So the current
-implementation is:
-Let's project D onto the cylinder's axis.
-`D = D_perp + D_parallel` with
-* D_parallel = how much the ray moves along the axis
-* D_perp = how much the ray moves around the cylinder
-Let A be the cylinder's axis.
-`D_parallel = D.A * A`
-`D_perp = D - D_parallel`
+---
 
-Finding the intersection point with the tube is equivalent to determining
-`| D_perp * t + OC_perp |² = r²` (check sphere)
-with OC_perp being the perpendicular component of OC along A.
-C is the center of the cylinder.
+## Resources
 
-### 2)
+### Ray Tracing & 3D Graphics
 
-we get `t`. We check if P(t) is inside the finite cylinder.
--cylinder.height / 2< y < cylinder.height / 2
-with y being the projection of P onto the axis
-`y = CP . A`
+- [_Ray Tracing in One Weekend_ — Peter Shirley (free online book)](https://raytracing.github.io/books/RayTracingInOneWeekend.html)
+- [Scratchapixel — Ray-Sphere, Ray-Cylinder, Ray-Cone intersection math](https://www.scratchapixel.com/)
+- [Wikipedia — Phong reflection model](https://en.wikipedia.org/wiki/Phong_reflection_model)
+- [Wikipedia — UV mapping](https://en.wikipedia.org/wiki/UV_mapping)
+- [Wikipedia — Bump mapping](https://en.wikipedia.org/wiki/Bump_mapping)
+- [Inigo Quilez — Implicit surface ray intersections](https://iquilezles.org/articles/)
+- [Sebastian Lague — Coding Adventure: Ray Tracing](https://www.youtube.com/watch?v=Qz0KTGYJtUk)
 
-### 3)
+### MiniLibX
 
-First we check the intersection with the ray and the plane that emcompass the disk.
-Then we check if that intersection point is inside the disk (the length from the center to that point is inferior to the radius of the disk).
+- [MiniLibX Linux source — 42Paris/minilibx-linux](https://github.com/42Paris/minilibx-linux)
 
-## UV
+### Mathematics
 
-For each object, we have a function that turns a point P(x,y,z) on the object to (u,v) coordinates.
-Using those (u,v) coordinate, we can associate them to a pixel position on a 2D texture image.
+- [3Blue1Brown — Essence of Linear Algebra (YouTube)](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab)
+- [Khan Academy — Dot product and cross product](https://www.khanacademy.org/math/linear-algebra)
+- [Yvan Monka — LE COURS : Produit scalaire - Première](https://www.youtube.com/watch?v=dII7myZuLvo)
 
-### Plane point to UV
+### Norminette & 42 Tooling
 
-Establish a (X, Y, plane_axis) orthonormal basis.
-X and Y are two normalized vector on the plane.
-For P, a point on the plane. We have CP being the vector from the plane center point to the point P such that:
-`CP = u * X + v * Y`
-But see that
-`CP⋅X = |CP|cos(θ)` because |X| = 1.
-In trigonometry, |CP|cos(θ) is exactly the length of the projection of CP onto the line defined by X. This length is, by definition, the u coordinate.
-So we have
-`u = CP⋅X`
-`v = CP⋅Y`
+- [Norminette — 42Paris/norminette](https://github.com/42Paris/norminette)
 
+---
 
-### Sphere point to UV
-https://en.wikipedia.org/wiki/UV_mapping
-local = vec3_normalize(vec3_minus(P, obj.pos));
-👉 Ça transforme ton point en vecteur unité depuis le centre de la sphère.
-Donc maintenant tu es sur une sphère unité.
+### AI Usage
 
-Projection sphérique → coordonnées angulaires
-Projection angulaire → carré 2D
-Damier sur ce carré
+**Claude (Anthropic)** was used during the development of this project for the following tasks:
+
+- **Mathematical explanations**: understanding the intersection equations for cylinders and cones (quadratic form derivation), UV mapping formulas, and TBN frame construction for bump mapping
+- **Debugging assistance**: identifying off-by-one errors in parsing, analyzing incorrect normals at primitive caps, and diagnosing shadow acne artifacts
+- **Code review**: checking norminette compliance after refactoring, and reviewing modular architecture choices
+- **Texture generation**: generating XPM heightmap textures (e.g., moon surface) used as bump map inputs
+
+AI was used as a **learning and debugging tool**, not to generate the core implementation. All ray-object intersection code, the lighting model, the parser, and the rendering loop were written by the author.

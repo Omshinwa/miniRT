@@ -1,41 +1,82 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_private.h                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dasamuel <dasamuel@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/09 11:15:18 by dasamuel          #+#    #+#             */
+/*   Updated: 2026/03/09 11:15:19 by dasamuel         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PARSE_PRIVATE_H
-#define PARSE_PRIVATE_H
+# define PARSE_PRIVATE_H
 
-#include "../math/math.h"
-#include "../app/app.h"
-
-char *get_next_line_strip_nl(int fd);
-
-/* ── token types ─────────────────────────────────────────────────────────── */
+# include "../app/app.h"
+# include "../math/math.h"
+# include "../raytrace/scene_object.h"
+# include <fcntl.h>
+# include <stdbool.h>
+# include <stddef.h>
 
 typedef enum e_token_type
 {
-	T_VEC,			   /* "x,y,z"  → t_vec3  (any range)           */
-	T_UNIT,			   /* "x,y,z"  → t_vec3  (components ∈ [-1,1]) */
-	T_FLOAT,		   /* "f"      → float                          */
-	T_DIAMETER,		   /* "d"      → float stored as radius d/2     */
-	T_FOV,			   /* "n"      → int [0, 180]                   */
-	T_RGB,			   /* "r,g,b"  → t_vec3 scaled 0-1              */
-	T_IS_CHECKERBOARD, /* "check"*/
-	T_TEXTURE,
 	T_INVALID,
-} t_token_type;
+	T_VEC,
+	T_UNIT,
+	T_FLOAT_UNIT,
+	T_FLOAT,
+	T_DIAMETER,
+	T_FOV,
+	T_RGB,
+	T_RGB_OR_TEXTURE,
+	T_IS_CHECKERBOARD,
+	T_TEXTURE,
+}						t_token_type;
 
 typedef struct s_field
 {
-	const char *name;
-	const t_token_type type;
-	const bool required;
-	const size_t offset;
-} t_field;
+	const char			*name;
+	const t_token_type	type;
+	const bool			required;
+	const size_t		offset;
+}						t_field;
 
 typedef struct s_instruction
 {
-	const char *id;
-	const size_t scene_target;
-	const t_field fields[5];
-} t_instruction;
+	const char			*id;
+	const t_obj_type	type;
+	const bool			should_be_unique;
+	size_t				scene_target;
+	const t_field		fields[5];
+}						t_instruction;
 
-bool parse_line(char *line, t_app *app);
-int parse_fields(t_app *app, int index, char **tokens, const t_field *fields, void *dest);
+typedef struct s_parse_args
+{
+	t_obj_type		type;
+	char			**tokens;
+	const t_field	*fields;
+	int				i;
+	void			*dest;
+}	t_parse_args;
+
+bool	print_err(const char *msg, const char *wrong_data,
+			const bool should_keep_going);
+
+char	*get_next_line_strip_nl(int fd);
+
+bool	parse_line(char *line, t_app *app);
+
+bool	do_non_shape_instruction(t_app *app, t_parse_args *args);
+bool	do_shape_instruction(t_app *app, t_parse_args *args);
+
+bool	parse_fields(t_app *app, t_parse_args *args);
+
+bool	read_float(char **s, float *out);
+bool	read_rgb(char *s, t_vec3 *out);
+bool	read_vec3(char *s, t_vec3 *out);
+
+int		setup_scene(t_app *app, char *filename);
+
 #endif

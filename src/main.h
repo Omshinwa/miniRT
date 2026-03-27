@@ -1,23 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.h                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dasamuel <dasamuel@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/05 06:27:08 by dasamuel          #+#    #+#             */
+/*   Updated: 2026/03/12 10:51:23 by dasamuel         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MAIN_H
-#define MAIN_H
+# define MAIN_H
 
-// Those are macros that should be avaiable in the whole project
-#define WINDOW_X 800
-#define WINDOW_Y 600
-#define WINDOW_RATIO (float)WINDOW_X / (float)WINDOW_Y
-
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdbool.h>
-#include <stdio.h> // printf
-
-#include <assert.h> // remove for build
-
-#include "../libft/libft.h"
-#include "../minilibx-linux/mlx.h"
-
-#include "math/math.h"
-#include "app/app.h"
-#include "render/render.h"
+# include "common.h"
+# include "math/math.h"
+# include "app/app.h"
 
 #endif

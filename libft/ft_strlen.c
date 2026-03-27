@@ -3,27 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wiwu <wiwu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: dasamuel <dasamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/03 19:25:23 by wiwu              #+#    #+#             */
-/*   Updated: 2025/11/06 18:32:42 by wiwu             ###   ########.fr       */
+/*   Created: 2025/11/05 16:23:21 by dasamuel          #+#    #+#             */
+/*   Updated: 2025/11/05 16:26:47 by dasamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
+#include "libft.h"
 
 size_t	ft_strlen(const char *s)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (s[i])
 		i++;
 	return (i);
 }
-
-// # include <stdio.h>
-// int	main(void)
-// {
-// 	printf("%zu", ft_strlen("1212"));
-// }

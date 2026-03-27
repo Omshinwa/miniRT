@@ -1,0 +1,8 @@
+C  15,2,-13         -1,0,-1      70
+
+L  70,0,-30           2.5              255,255,255
+L  -50,0,-20        4            180,180,255
+
+sp  0,0,-30         20             scenes/moonmap4k.xpm scenes/moonbump4k.xpm
+
+sp  0,0,0       300              scenes/skyspace.xpm
