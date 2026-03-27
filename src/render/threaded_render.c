@@ -23,6 +23,9 @@ typedef struct s_thread_job
 	int		thread_count;
 	int		tile_count_x;
 	int		tile_count_y;
+	int		render_pass;
+	int		local_pos_x;
+	int		local_pos_y;
 }t_thread_job;
 
 static int	get_thread_count(void)
@@ -68,8 +71,12 @@ static void	render_tile(t_thread_job *job, int tile_x, int tile_y)
 	{
 		pos[1] = y_start - 1;
 		while (++pos[1] < y_end)
-			set_image_pixel_at(job->app, pos[0], pos[1],
-				calc_pixel_color(job->app, pos[0], pos[1]));
+		{
+			if (pos[0] % job->render_pass == job->local_pos_x
+				&& pos[1] % job->render_pass == job->local_pos_y)
+				set_image_pixel_at(job->app, pos[0], pos[1],
+					calc_pixel_color(job->app, pos[0], pos[1]));
+		}
 	}
 }
 
@@ -95,18 +102,27 @@ void	render_frame_multithreaded(t_app *app)
 {
 	int				thread_count;
 	int				i;
+	int				offset;
+	int				local_pos_x;
+	int				local_pos_y;
 	pthread_t		threads[MAX_RENDER_THREADS];
 	t_thread_job	jobs[MAX_RENDER_THREADS];
 	bool			thread_started[MAX_RENDER_THREADS];
+	static int		frame;
+	const int		render_pass = 6;
 
 	thread_count = get_thread_count();
+	offset = render_pass * render_pass;
+	local_pos_x = frame % render_pass;
+	local_pos_y = frame / render_pass;
 	jobs[0].tile_count_x = (app->img.width + TILE_SIZE - 1) / TILE_SIZE;
 	jobs[0].tile_count_y = (app->img.height + TILE_SIZE - 1) / TILE_SIZE;
 	i = -1;
 	while (++i < thread_count)
 	{
 		jobs[i] = (t_thread_job){app, i, thread_count,
-			jobs[0].tile_count_x, jobs[0].tile_count_y};
+			jobs[0].tile_count_x, jobs[0].tile_count_y,
+			render_pass, local_pos_x, local_pos_y};
 		thread_started[i] = false;
 		if (pthread_create(&threads[i], NULL, render_thread, &jobs[i]) != 0)
 			render_thread(&jobs[i]);
@@ -119,4 +135,5 @@ void	render_frame_multithreaded(t_app *app)
 		if (thread_started[i])
 			pthread_join(threads[i], NULL);
 	}
+	frame = (frame * 5017 + 1) % offset;
 }
