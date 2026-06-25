@@ -19,22 +19,15 @@ The program parses a `.rt` scene file, renders the resulting image in a window u
 
 ## Features
 
-### Mandatory
+<video src="https://github.com/Omshinwa/miniRT/raw/main/docs/Camera_interaction.mp4" controls width="600"></video>
 
-- [x] Sphere, plane, cylinder intersection
-- [x] Ambient + diffuse lighting
-- [x] Hard shadows
-- [x] Scene parsing from `.rt` file
-- [x] MiniLibX window rendering
+* Able to render basic 3D shapes (sphere, plane, cylinder, cone).
+* Phong reflection model (Ambient, diffuse lighting, specular highlights)
+* Hard shadows
+* Multi colored lights
+* Interactively move the objects and camera in the 3D space
+* Texture map and Bump map (with XPM image files)
 
-### Bonus
-
-- [x] Phong specular highlights
-- [x] Checkerboard texture (UV-mapped)
-- [x] Bump mapping via XPM height maps
-- [x] Cone primitive
-- [x] Multi-light support
-- [x] Colored lights
 
 move the camera in space
 select an object, move it in space
@@ -188,3 +181,13 @@ cy  1,0,3  0,1,0  1  3  0,0,255
 - [3Blue1Brown — Essence of Linear Algebra (YouTube)](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab)
 - [Khan Academy — Dot product and cross product](https://www.khanacademy.org/math/linear-algebra)
 - [Yvan Monka — LE COURS : Produit scalaire - Première](https://www.youtube.com/watch?v=dII7myZuLvo)
+
+## Ideas for improvements
+
+### Bounding Volume Hierarchy (BVH)
+    Objects are put in boxes. These boxes are organized into a tree. When a ray comes in, you test the cheap box first; if it misses the box, you skip the expensive triangle/sphere intersection tests for everything inside it. The hierarchy lets you cull huge chunks of the scene.
+
+### Monte Carlo light sampling (progressive convergence)
+    On each frame, every point is lit by a single randomly chosen light rather than every light. The result is accumulated — summed across frames and divided by the frame count. This average converges to the correct render image while the framerate is still as smooth as a single-light scene.
+
+    Note that each light's contribution is multiplied by N (the number of lights) to offset the monte carlo (each light only has a 1/N chance of being picked).
