@@ -14,27 +14,22 @@ The program parses a `.rt` scene file, renders the resulting image in a window u
 
 # Features
 
-// features
+* Able to render basic 3D shapes (sphere, plane, cylinder, cone).
+* Phong reflection model (Ambient, diffuse lighting, specular highlights)
+
+* Hard shadows
+* Multi colored lights
+* Texture map and Bump map (with XPM image files)
+* Move camera around
 
 https://github.com/user-attachments/assets/be7b838a-5d68-479e-bbc8-d2b2d9043ebf
 
 
-
-
-## Features
-
-
-
-* Able to render basic 3D shapes (sphere, plane, cylinder, cone).
-* Phong reflection model (Ambient, diffuse lighting, specular highlights)
-* Hard shadows
-* Multi colored lights
-* Interactively move the objects and camera in the 3D space
-* Texture map and Bump map (with XPM image files)
+* Select an object, move it in space
+* Multithreaded
 
 
 move the camera in space
-select an object, move it in space
 toggle textures etc
 
  and supports the following mandatory features:
