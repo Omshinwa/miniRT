@@ -10,11 +10,11 @@
 #                                                                              #
 # **************************************************************************** #
 
-PURPLE		=	\033[1;35m
-RED			=	\033[1;31m
-GREEN		=	\033[1;32m
-BLUE		=	\033[1;34m
-RESET		=	\033[0m
+PURPLE		:=	$(shell printf '\033[1;35m')
+RED			:=	$(shell printf '\033[1;31m')
+GREEN		:=	$(shell printf '\033[1;32m')
+BLUE		:=	$(shell printf '\033[1;34m')
+RESET		:=	$(shell printf '\033[0m')
 
 TARGET		=	miniRT
 
@@ -63,7 +63,7 @@ OBJECT_FILES	=	$(addprefix $(OBJS_DIR)/, $(OBJS))
 DEPENDANCIES	=	$(OBJECT_FILES:.o=.d)
 
 CPPFLAGS	=
-CFLAGS		=	-Wall -Wextra -Werror -g3 -pthread
+CFLAGS		=	-Wall -Wextra -Werror -g3 -pthread -std=gnu17
 CMPL_CMD	=	cc $(CFLAGS) -MMD -MP $(CPPFLAGS)
 LINK_CMD	=	cc -pthread -lm -lXext -lX11
 
@@ -96,7 +96,7 @@ $(TARGET): $(OBJECT_FILES) Makefile $(LIBFT_A) $(MINILIBX_A)
 	@echo "                · ─────────────────────────────► △  cone$(PURPLE)"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 	@echo "$(GREEN)is ready 🎉🥳🎊"
-	@echo "$(GREEN)Made by$(RESET) $(RED)dasamuel $(GREEN)and $(RED)wiwu$(GREEN).$(RESET)"
+	@echo "$(GREEN)Made by$(RESET) $(RED)wiwu $(GREEN)and $(RED)dasamuel$(GREEN).$(RESET)"
 
 # compilation
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
@@ -112,7 +112,6 @@ clean:
 	@echo "$(GREEN) Objects files successfully delete 🎉$(RESET)"
 
 fclean: clean
-	@$(RM) $(TARGET) miniRT_bonus
 	@$(MAKE) -s -C $(LIBFT_DIR) fclean
 	@echo "$(GREEN) Executable files successfully delete 🎉$(RESET)"
 

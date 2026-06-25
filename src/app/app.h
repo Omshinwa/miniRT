@@ -22,8 +22,8 @@
 # define RESET "\033[0m"
 
 // Window size
-# define WINDOW_X 1920
-# define WINDOW_Y 1080
+# define WINDOW_X 800 //1920
+# define WINDOW_Y 600 //1080
 
 // Render context: MLX, window, image, scene and dimensions
 typedef struct s_data
@@ -76,6 +76,7 @@ void		draw_info(t_app *app);
 int			setup_scene(t_app *app, char *filename);
 int			calc_pixel_color(t_app *app, int x, int y);
 void		render_frame_multithreaded(t_app *app);
+void		destroy_thread_pool(void);
 
 // Object selection by click (picking)
 t_object	*get_object_from_xy(t_app *app, int x, int y);

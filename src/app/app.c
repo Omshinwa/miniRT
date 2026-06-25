@@ -39,6 +39,7 @@ void	exit_n_clean(t_app *app, char *msg)
 		ft_putendl_fd(msg, 2);
 	if (!app)
 		exit(1);
+	destroy_thread_pool();
 	if (app->mlx && app->win)
 		mlx_destroy_window(app->mlx, app->win);
 	if (app->mlx && app->img.mlx_img)

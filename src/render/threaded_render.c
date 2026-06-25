@@ -15,18 +15,25 @@
 
 #define TILE_SIZE 32
 #define MAX_RENDER_THREADS 64
+#define RENDER_PASS 6
 
-typedef struct s_thread_job
+typedef struct s_thread_pool
 {
-	t_app	*app;
-	int		thread_id;
-	int		thread_count;
-	int		tile_count_x;
-	int		tile_count_y;
-	int		render_pass;
-	int		local_pos_x;
-	int		local_pos_y;
-}t_thread_job;
+	pthread_t			threads[MAX_RENDER_THREADS];
+	pthread_barrier_t	start_barrier;
+	pthread_barrier_t	end_barrier;
+	int					thread_count;
+	bool				shutdown;
+	t_app				*app;
+	int					tile_count_x;
+	int					tile_count_y;
+	int					render_pass;
+	int					local_pos_x;
+	int					local_pos_y;
+}	t_thread_pool;
+
+static t_thread_pool	g_pool;
+static int				g_thread_ids[MAX_RENDER_THREADS];
 
 static int	get_thread_count(void)
 {
@@ -50,7 +57,7 @@ static void	set_image_pixel_at(t_app *app, int x, int y, int color)
 	buffer[(y * app->img.size_line / bytes_per_pixel) + x] = color;
 }
 
-static void	render_tile(t_thread_job *job, int tile_x, int tile_y)
+static void	render_tile(int tile_x, int tile_y)
 {
 	int	x_start;
 	int	y_start;
@@ -61,79 +68,104 @@ static void	render_tile(t_thread_job *job, int tile_x, int tile_y)
 	x_start = tile_x * TILE_SIZE;
 	y_start = tile_y * TILE_SIZE;
 	x_end = x_start + TILE_SIZE;
-	if (x_end > job->app->img.width)
-		x_end = job->app->img.width;
+	if (x_end > g_pool.app->img.width)
+		x_end = g_pool.app->img.width;
 	y_end = y_start + TILE_SIZE;
-	if (y_end > job->app->img.height)
-		y_end = job->app->img.height;
+	if (y_end > g_pool.app->img.height)
+		y_end = g_pool.app->img.height;
 	pos[0] = x_start - 1;
 	while (++pos[0] < x_end)
 	{
 		pos[1] = y_start - 1;
 		while (++pos[1] < y_end)
 		{
-			if (pos[0] % job->render_pass == job->local_pos_x
-				&& pos[1] % job->render_pass == job->local_pos_y)
-				set_image_pixel_at(job->app, pos[0], pos[1],
-					calc_pixel_color(job->app, pos[0], pos[1]));
+			if (pos[0] % g_pool.render_pass == g_pool.local_pos_x
+				&& pos[1] % g_pool.render_pass == g_pool.local_pos_y)
+				set_image_pixel_at(g_pool.app, pos[0], pos[1],
+					calc_pixel_color(g_pool.app, pos[0], pos[1]));
 		}
 	}
 }
 
 static void	*render_thread(void *arg)
 {
-	t_thread_job	*job;
-	int				thread_tile;
-	int				tile_count;
+	int	thread_id;
+	int	tile_count;
+	int	thread_tile;
 
-	job = (t_thread_job *)arg;
-	tile_count = job->tile_count_x * job->tile_count_y;
-	thread_tile = job->thread_id;
-	while (thread_tile < tile_count)
+	thread_id = *(int *)arg;
+	while (1)
 	{
-		render_tile(job, thread_tile % job->tile_count_x,
-			thread_tile / job->tile_count_x);
-		thread_tile += job->thread_count;
+		pthread_barrier_wait(&g_pool.start_barrier);
+		if (g_pool.shutdown)
+			break ;
+		tile_count = g_pool.tile_count_x * g_pool.tile_count_y;
+		thread_tile = thread_id;
+		while (thread_tile < tile_count)
+		{
+			render_tile(thread_tile % g_pool.tile_count_x,
+				thread_tile / g_pool.tile_count_x);
+			thread_tile += g_pool.thread_count;
+		}
+		pthread_barrier_wait(&g_pool.end_barrier);
 	}
 	return (NULL);
 }
 
+static void	init_thread_pool(t_app *app)
+{
+	int	i;
+
+	g_pool.thread_count = get_thread_count();
+	g_pool.app = app;
+	g_pool.shutdown = false;
+	pthread_barrier_init(&g_pool.start_barrier, NULL,
+		g_pool.thread_count + 1);
+	pthread_barrier_init(&g_pool.end_barrier, NULL,
+		g_pool.thread_count + 1);
+	i = -1;
+	while (++i < g_pool.thread_count)
+	{
+		g_thread_ids[i] = i;
+		pthread_create(&g_pool.threads[i], NULL, render_thread,
+			&g_thread_ids[i]);
+	}
+}
+
+void	destroy_thread_pool(void)
+{
+	int	i;
+
+	if (g_pool.thread_count == 0)
+		return ;
+	g_pool.shutdown = true;
+	pthread_barrier_wait(&g_pool.start_barrier);
+	i = -1;
+	while (++i < g_pool.thread_count)
+		pthread_join(g_pool.threads[i], NULL);
+	pthread_barrier_destroy(&g_pool.start_barrier);
+	pthread_barrier_destroy(&g_pool.end_barrier);
+	g_pool.thread_count = 0;
+}
+
 void	render_frame_multithreaded(t_app *app)
 {
-	int				thread_count;
-	int				i;
-	int				offset;
-	int				local_pos_x;
-	int				local_pos_y;
-	pthread_t		threads[MAX_RENDER_THREADS];
-	t_thread_job	jobs[MAX_RENDER_THREADS];
-	bool			thread_started[MAX_RENDER_THREADS];
 	static int		frame;
-	const int		render_pass = 6;
+	static bool		initialized;
+	const int		render_pass = RENDER_PASS;
 
-	thread_count = get_thread_count();
-	offset = render_pass * render_pass;
-	local_pos_x = frame % render_pass;
-	local_pos_y = frame / render_pass;
-	jobs[0].tile_count_x = (app->img.width + TILE_SIZE - 1) / TILE_SIZE;
-	jobs[0].tile_count_y = (app->img.height + TILE_SIZE - 1) / TILE_SIZE;
-	i = -1;
-	while (++i < thread_count)
+	if (!initialized)
 	{
-		jobs[i] = (t_thread_job){app, i, thread_count,
-			jobs[0].tile_count_x, jobs[0].tile_count_y,
-			render_pass, local_pos_x, local_pos_y};
-		thread_started[i] = false;
-		if (pthread_create(&threads[i], NULL, render_thread, &jobs[i]) != 0)
-			render_thread(&jobs[i]);
-		else
-			thread_started[i] = true;
+		init_thread_pool(app);
+		initialized = true;
 	}
-	i = -1;
-	while (++i < thread_count)
-	{
-		if (thread_started[i])
-			pthread_join(threads[i], NULL);
-	}
-	frame = (frame * 5017 + 1) % offset;
+	g_pool.app = app;
+	g_pool.render_pass = render_pass;
+	g_pool.local_pos_x = frame % render_pass;
+	g_pool.local_pos_y = frame / render_pass;
+	g_pool.tile_count_x = (app->img.width + TILE_SIZE - 1) / TILE_SIZE;
+	g_pool.tile_count_y = (app->img.height + TILE_SIZE - 1) / TILE_SIZE;
+	pthread_barrier_wait(&g_pool.start_barrier);
+	pthread_barrier_wait(&g_pool.end_barrier);
+	frame = (frame * 5017 + 1) % (render_pass * render_pass);
 }

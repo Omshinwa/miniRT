@@ -21,9 +21,7 @@ t_vec3	get_cone_normal(const t_cone *cn, const t_vec3 *point,
 	float	proj;
 	float	k_sq;
 	t_vec3	normal;
-	t_vec3	base_center;
 
-	base_center = vec3_add(cn->pos, vec3_sca(cn->axis, cn->height));
 	p_local = vec3_sub(*point, cn->pos);
 	proj = vec3_dot(p_local, cn->axis);
 	if (fabsf(proj - cn->height) < EPSILON * 10)

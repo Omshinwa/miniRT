@@ -1,117 +1,21 @@
 *This project has been created as part of the 42 curriculum by dasamuel and wiwu.*
 
----
-
 # miniRT — A Ray Tracer in C
 
-![42 Badge](https://img.shields.io/badge/42-miniRT-blue)
-![Language](https://img.shields.io/badge/language-C-lightgrey)
-![Score](https://img.shields.io/badge/score-125%2F100-brightgreen)
-
----
+// here is the content section
 
 ## Description
 
-**miniRT** is a ray tracer written in C, built as part of the 42 school curriculum. The goal of the project is to implement the fundamental principles of ray tracing from scratch: casting rays from a camera into a 3D scene, computing intersections with geometric primitives, and simulating the interaction of light with surfaces.
+**miniRT** is a raytracer written in C, built as part of the 42 school curriculum. The goal of the project is to implement the fundamental principles of ray tracing from scratch: casting rays from a camera into a 3D scene, computing intersections with geometric primitives, and simulating the interaction of light with surfaces.
 
-The program parses a `.rt` scene file, renders the resulting image in a window using **MiniLibX**, and supports the following mandatory features:
+The program parses a `.rt` scene file, renders the resulting image in a window using **MiniLibX**.
 
-- **Geometric primitives**: sphere, plane, cylinder
-- **Lighting model**: ambient light, diffuse (Lambertian) shading, hard shadows
-- **Camera**: configurable position, orientation, and field of view
-- **Scene description**: parsed from a `.rt` text file
+// features
 
-### Bonus Features
+# Features
 
-- Specular highlights (Phong reflection model)
-- Checkerboard texture pattern (UV-mapped on all primitives)
-- Bump mapping / normal perturbation using XPM texture maps
-- Additional primitives: **cone**, **disk**, **hyperboloid** *(optional)*
-- Multi-light support
-- Colored lights
+// features
 
----
-
-## Instructions
-
-### Requirements
-
-- **OS**: Linux or macOS
-- **Compiler**: `gcc` or `clang`
-- **MiniLibX**: included or installed separately depending on your system
-- **Make**
-
-### Compilation
-
-```bash
-# Clone the repository
-git clone git@vogsphere.42paris.fr:vogsphere/intra-uuid-3bcc727e-6788-4b4a-8c4a-f7668893ac81-7220980-wiwu miniRT
-cd miniRT
-
-# Build
-make
-```
-
-### Execution
-
-```bash
-./miniRT scenes/<filename>.rt
-```
-
-The `.rt` file describes the scene using identifiers. Each line defines one element:
-
-| Identifier | Element           | Fields in order										|
-|------------|-------------------|------------------------------------------------------|
-| `A`        | Ambient light     | Brightness, Color									|
-| `C`        | Camera            | Position, Orientation, FOV							|
-| `L`        | Point light       | Position, Brightness, Color							|
-| `sp`       | Sphere            | Position, Diameter, Color				 			|
-| `pl`       | Plane             | Position, Orientation, Color							|
-| `cy`       | Cylinder          | Position, Orientation, Diameter, Height, Color		|
-| `co`       | Cone *(bonus)*    | Position, Orientation, Opening angle, Height, Color	|
-
-Field definitions:
-Brightness: number in [0,1]
-Color: 3 integers in [0-255]
-Position: 3 numbers separated by a comma `,` eg: `0.2,-45,788789`
-Orientation: 3 numbers in [-1,1] separated by a comma `,` represents a 3D vector with a norm of 1
-FOV: integer in [0,180]
-Diameter, Height, Opening angle: single number, note that the opening angle is in radians.
-
-(optional)
-For Shapes, they can have a Texture instead of the Color field.
-They can also optionally have a bump map Texture as the last field.
-A Texture is a file path to a .xpm file.
-A key word `check` can be put between the Color/Texture and the Bump map texture of the
-shape, this will have the object be displayed in checkerboard.
-eg: `pl  15,0,0    0,1,0    scenes/earth.xpm     check    scenes/moon.xpm`
-
-### Example Scene File
-
-```
-A  0.2  255,255,255
-
-C  0,0,-5  0,0,1  70
-
-L  -2,5,-3  0.8  255,255,255
-
-sp  0,0,0  2  255,0,0
-pl  0,-2,0  0,1,0  100,200,100
-cy  1,0,3  0,1,0  1  3  0,0,255
-```
-
-### Controls
-
-| Key           | Action             									|
-|---------------|-------------------------------------------------------|
-| `ESC` key		| Close the window   									|
-| Red cross		| Close the window   									|
-| Arrow keys    | Move the camera (or the active object)				|
-| Numpad keys   | Toggle on or off some of the rendering pipeline 		|
-| `WASDQE` keys | Rotate the camera (or the active object, if possible)	|
-| `+-` keys		| Change the camera's Field Of View						|
-
----
 
 ## Features
 
@@ -131,6 +35,125 @@ cy  1,0,3  0,1,0  1  3  0,0,255
 - [x] Cone primitive
 - [x] Multi-light support
 - [x] Colored lights
+
+move the camera in space
+select an object, move it in space
+toggle textures etc
+
+ and supports the following mandatory features:
+
+- **Geometric primitives**: sphere, plane, cylinder
+- **Lighting model**: ambient light, diffuse (Lambertian) shading, hard shadows
+- **Camera**: configurable position, orientation, and field of view
+- **Scene description**: parsed from a `.rt` text file
+
+### Bonus Features
+
+- Specular highlights (Phong reflection model)
+- Checkerboard texture pattern (UV-mapped on all primitives)
+- Bump mapping / normal perturbation using XPM texture maps
+- Additional primitives: **cone**, **disk**, **hyperboloid** *(optional)*
+- Multi-light support
+- Colored lights
+
+---
+
+## Installation
+
+### Requirements
+
+- **OS**: Linux or macOS
+- **Compiler**: `gcc` or `clang`
+- **Make**
+- **MiniLibX**: a graphic library, it is included here
+
+### Compilation
+
+```bash
+# Clone the repository
+git clone https://github.com/Omshinwa/miniRT.git miniRT
+cd miniRT
+
+# Build
+make
+```
+
+### Execution
+
+```bash
+./miniRT <FILEPATH>
+```
+
+## Configuration File
+
+The **miniRT** programs takes as argument a text file with the extension `.rt`. This file is the scene descriptor. It is must be made up of several lines where each line describe an object formatted as such:
+
+`<Identifier> <Fields>`
+
+The different elements are:
+
+| Identifier | Object           | Fields in order										| Must be Unique? |
+|------------|-------------------|------------------------------------------------------|---------|
+| `C`        | Camera            | Position, Orientation, FOV							| Yes     |
+| `A`        | Ambient light     | Brightness, Color									| Yes     |
+| `L`        | Point light       | Position, Brightness, Color							| No      |
+| `sp`       | Sphere            | Position, Diameter, Surface				 			| No      |
+| `pl`       | Plane             | Position, Orientation, Surface						| No      |
+| `cy`       | Cylinder          | Position, Orientation, Diameter, Height, Surface		| No      |
+| `co`       | Cone              | Position, Orientation, Opening angle, Height, Surface| No      |
+
+### Field definitions:
+
+| Field | Definition |
+| ----- | ---------- |
+| **Brightness** | Float number in [0,1] |
+| **Color** | 3 integers in [0-255] |
+| **Position** | 3 Float numbers separated by a comma `,` eg: `0.2,-45,788789` |
+| **Orientation** | 3 Float numbers in [-1,1] separated by a comma `,` represents a 3D vector with a norm of 1. Y axis is up. |
+| **FOV** | An integer in [0,180] |
+| **Diameter, Height, Opening angle** | A single float number, note that the opening angle is in radians. |
+
+### Surface
+
+For Shapes (sphere, plane cylinder, cone), the last field describes the appareance of their surface. It can be made up of up to three arguments:
+
+**`<Color/Texture Map> [Checkerboard Overlay] [Texture Bump]`**
+
+- `<Color/Texture Map>`: Mandatory, it's either a **Color** (see above). Or a **Texture**, in this case it must be a path to a **.XPM** file.
+
+- `[Checkerboard Overlay?]`: You can optionally overlay a checkerboard pattern as a texture. To do so, write the **`check`** keyword, otherwise leave it empty.
+
+- `[Texture Bump]`: Finally, you can add a bump map, it must be a path to a **.XPM** file.
+
+### Example
+
+`pl  15,0,0    0,1,0    scenes/earth.xpm     check    scenes/moon.xpm`
+
+This will create a Plane object, at position (15,0,0), oriented up, with the texture `scenes/earth.xpm`, have a checkerboard overlay and a bump map of `scenes/moon.xpm`.
+
+### Example Scene File
+
+```
+A  0.2  255,255,255
+
+C  0,0,-5  0,0,1  70
+
+L  -2,5,-3  0.8  255,255,255
+
+sp  0,0,0  2  255,0,0
+pl  0,-2,0  0,1,0  100,200,100
+cy  1,0,3  0,1,0  1  3  0,0,255
+```
+
+## Controls
+
+| Key           | Action             									|
+|---------------|-------------------------------------------------------|
+| `ESC` key		| Close the window   									|
+| Arrow keys    | Move the camera (or the active object)				|
+| Numpad keys   | Toggle on or off some of the rendering pipeline 		|
+| `WASDQE` keys | Rotate the camera (or the active object, if possible)	|
+| `+-` keys		| Change the camera's Field Of View						|
 
 ---
 
@@ -165,20 +188,3 @@ cy  1,0,3  0,1,0  1  3  0,0,255
 - [3Blue1Brown — Essence of Linear Algebra (YouTube)](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab)
 - [Khan Academy — Dot product and cross product](https://www.khanacademy.org/math/linear-algebra)
 - [Yvan Monka — LE COURS : Produit scalaire - Première](https://www.youtube.com/watch?v=dII7myZuLvo)
-
-### Norminette & 42 Tooling
-
-- [Norminette — 42Paris/norminette](https://github.com/42Paris/norminette)
-
----
-
-### AI Usage
-
-**Claude (Anthropic)** was used during the development of this project for the following tasks:
-
-- **Mathematical explanations**: understanding the intersection equations for cylinders and cones (quadratic form derivation), UV mapping formulas, and TBN frame construction for bump mapping
-- **Debugging assistance**: identifying off-by-one errors in parsing, analyzing incorrect normals at primitive caps, and diagnosing shadow acne artifacts
-- **Code review**: checking norminette compliance after refactoring, and reviewing modular architecture choices
-- **Texture generation**: generating XPM heightmap textures (e.g., moon surface) used as bump map inputs
-
-AI was used as a **learning and debugging tool**, not to generate the core implementation. All ray-object intersection code, the lighting model, the parser, and the rendering loop were written by the author.
