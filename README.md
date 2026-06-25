@@ -22,10 +22,16 @@ The program parses a `.rt` scene file, renders the resulting image in a window u
 * Texture map and Bump map (with XPM image files)
 * Move camera around
 
-https://github.com/user-attachments/assets/be7b838a-5d68-479e-bbc8-d2b2d9043ebf
-
+https://github.com/user-attachments/assets/045237a9-84b1-469c-babf-c4df844a1561
 
 * Select an object, move it in space
+  
+https://github.com/user-attachments/assets/8523ce16-4b05-44b0-abd4-776e442e3604
+
+* Ability to turn render components on or off
+
+https://github.com/user-attachments/assets/e7f784f9-9c16-4902-ba01-a6295cfd1caf
+
 * Multithreaded
 
 
