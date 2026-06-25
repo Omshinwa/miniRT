@@ -16,10 +16,14 @@ The program parses a `.rt` scene file, renders the resulting image in a window u
 
 // features
 
+https://github.com/user-attachments/assets/be7b838a-5d68-479e-bbc8-d2b2d9043ebf
+
+
+
 
 ## Features
 
-<video src="https://github.com/Omshinwa/miniRT/raw/main/docs/Camera_interaction.mp4" controls width="600"></video>
+
 
 * Able to render basic 3D shapes (sphere, plane, cylinder, cone).
 * Phong reflection model (Ambient, diffuse lighting, specular highlights)
