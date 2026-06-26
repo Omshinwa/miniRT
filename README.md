@@ -2,25 +2,31 @@
 
 # miniRT — A Ray Tracer in C
 
-// here is the content section
+## Contents
+
+- [Description](#description)
+- [Features](#features)
+- [Installation](#installation)
+- [Configuration File](#configuration-file)
+- [Controls](#controls)
+- [Resources](#resources)
+- [Ideas for improvements](#ideas-for-improvements)
 
 ## Description
 
-**miniRT** is a raytracer written in C, built as part of the 42 school curriculum. The goal of the project is to implement the fundamental principles of ray tracing from scratch: casting rays from a camera into a 3D scene, computing intersections with geometric primitives, and simulating the interaction of light with surfaces.
+**miniRT** is a raytracer written in C, built for the 42 school curriculum. The goal of the project is to implement the fundamental principles of ray tracing from scratch: casting rays from a camera into a 3D scene, computing intersections with geometric primitives, and simulating the interaction of light with surfaces.
 
 The program parses a `.rt` scene file, renders the resulting image in a window using **MiniLibX**.
 
-// features
+![Moon rendered with miniRT](docs/moon.png)
 
 # Features
 
-* Able to render basic 3D shapes (sphere, plane, cylinder, cone).
+* Basic 3D shapes (sphere, plane, cylinder, cone).
 * Phong reflection model (Ambient, diffuse lighting, specular highlights)
-
-* Hard shadows
-* Multi colored lights
-* Texture map and Bump map (with XPM image files)
-* Move camera around
+* Multi colored lights support and Hard shadows
+* UV mapping on all shapes, Texture maps and Bump maps (with XPM image format)
+* Move the camera interactively
 
 https://github.com/user-attachments/assets/5c98dc82-b2ab-4eef-b164-65689450e4b9
 
@@ -28,33 +34,11 @@ https://github.com/user-attachments/assets/5c98dc82-b2ab-4eef-b164-65689450e4b9
   
 https://github.com/user-attachments/assets/8523ce16-4b05-44b0-abd4-776e442e3604
 
-* Ability to turn render components on or off
+* Turn steps of the render on or off
 
 https://github.com/user-attachments/assets/e7f784f9-9c16-4902-ba01-a6295cfd1caf
 
-* Multithreaded
-
-
-move the camera in space
-toggle textures etc
-
- and supports the following mandatory features:
-
-- **Geometric primitives**: sphere, plane, cylinder
-- **Lighting model**: ambient light, diffuse (Lambertian) shading, hard shadows
-- **Camera**: configurable position, orientation, and field of view
-- **Scene description**: parsed from a `.rt` text file
-
-### Bonus Features
-
-- Specular highlights (Phong reflection model)
-- Checkerboard texture pattern (UV-mapped on all primitives)
-- Bump mapping / normal perturbation using XPM texture maps
-- Additional primitives: **cone**, **disk**, **hyperboloid** *(optional)*
-- Multi-light support
-- Colored lights
-
----
+* Multithreads
 
 ## Installation
 
@@ -153,17 +137,6 @@ cy  1,0,3  0,1,0  1  3  0,0,255
 | `WASDQE` keys | Rotate the camera (or the active object, if possible)	|
 | `+-` keys		| Change the camera's Field Of View						|
 
----
-
-## Technical Choices
-
-- **global variables** Used for parsing (they are const static, which is compliant with the Norm), they connect each field of an object with how they should be formatted in the file. This allow for a single parsing function `do_instruction` that handles all entities uniformly instead of writing one parser per object type.
-- **Norminette compliant**: functions ≤ 25 lines, files ≤ 5 functions, lines ≤ 80 chars
-- **Vector math** implemented from scratch: dot product, cross product, normalization, reflection
-- **UV mapping** computed analytically per primitive (sphere: spherical, cylinder/cone: cylindrical, plane: planar)
-- **Bump mapping** uses the TBN frame (Tangent/Bitangent/Normal) and central-difference gradients sampled from the XPM heightmap
-
----
 
 ## Resources
 
@@ -196,3 +169,5 @@ cy  1,0,3  0,1,0  1  3  0,0,255
     On each frame, every point is lit by a single randomly chosen light rather than every light. The result is accumulated — summed across frames and divided by the frame count. This average converges to the correct render image while the framerate is still as smooth as a single-light scene.
 
     Note that each light's contribution is multiplied by N (the number of lights) to offset the monte carlo (each light only has a 1/N chance of being picked).
+
+*For details on the implementation, read the TECHNICAL.md file.*

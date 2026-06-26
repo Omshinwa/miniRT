@@ -22,7 +22,7 @@
 #define RESET "\033[0m"
 
 // Window size
-#define WINDOW_X 800 // 1920
+#define WINDOW_X 800 // 19206
 #define WINDOW_Y 600 // 1080
 
 // Render context: MLX, window, image, scene and dimensions
