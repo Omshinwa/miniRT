@@ -1,16 +1,3 @@
-
-## Camera
-
-### View of the world
-
-**`create_cam_ray()`**
-
-    A ray is defined as a normalized directional vector with an origin.
-    We construct a ray from the camera to each pixel points. Given a pixel (x,y) on a screen, we first have to calculate the coordinates of that Vector P of coordinate p.x, p.y, p.z.
-
-    The FOV (field of view), is the angle that tells us how much we see.
-
-
 # Project Architecture
 
 ## parse/
@@ -83,6 +70,33 @@ https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
 
 # Mathematical details
 
+
+## What's a ray
+
+A ray is defined as a normalized directional vector D with an origin O. It can be represented with the function notation:
+
+`P(t) = O + D*t`
+
+Where
+
+    P is the collection of points forming the ray.
+    O is the origin of the ray (the camera).
+    D the direction vector.
+    t a parameter describing time.
+
+This is equivalent to the system of equation:
+
+```
+x(t) = Ox + Dx * t
+y(t) = Oy + Dy * t
+z(t) = Oz + Dz * t
+```
+
+Each value of `t` gives one point `(x, y, z)` on the ray.
+
+We construct a ray from the camera to each pixel points. Given a pixel (x,y) on a screen, we first have to calculate the coordinates of that Vector P of coordinate p.x, p.y, p.z.
+
+
 ## dot product (fr: produit scalaire)
 
 Let A and B be two vectors of the same dimension, the dot product is defined as:
@@ -130,13 +144,6 @@ Raytracing is about casting rays, calculating the intersections between those ra
 A ray is defined as
 
 `P(t) = O + D*t`
-
-Where
-
-    P is the collection of points forming the ray.
-    O is the origin of the ray (the camera).
-    D the direction vector.
-    t a parameter describing time.
 
 A sphere centered around the point C with radius r satisfies:
 
